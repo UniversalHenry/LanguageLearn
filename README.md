@@ -1,6 +1,6 @@
 # LanguageLearn
 
-learning C++ and Python　(with VScode & Pycharm on ubuntu)
+learning C++ and Python　(with VScode and Pycharm on ubuntu)
 
 http://www.runoob.com/cplusplus/cpp-tutorial.html(C++)
 

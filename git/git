@@ -64,4 +64,19 @@ git rebase
 git tag <tagname>
 git tag -a <tagname> -m "blablabla..."
 git tag
+git push origin <tagname>
+git push origin --tags
+git tag -d <tagname>
+git push origin :refs/tags/<tagname>
+
+https://gitee.com/
+git remote rm <origin-name>
+git remote add <origin-name> git@gitee.com:liaoxuefeng/learngit.git
+
+.gitignore
+
+cat .git/config
+cat .gitconfig
+git config [--global] alias.st status
+
 

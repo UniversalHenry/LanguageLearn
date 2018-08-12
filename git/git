@@ -4,7 +4,7 @@ git config --global user.email "email@example.com"
 
 
 git init
-git add <file>
+git add <file> (-u -A)
 git commit -m <message>
 
 git status
@@ -39,3 +39,29 @@ git checkout <name>
 git checkout -b <name>
 git merge <name>
 git branch -d <name>
+git branch -D <name>(forced)
+
+git log --graph
+
+git merge --no-ff -m "commit" <name>(keep history)
+
+git stash
+git stash list
+{
+git stash apply
+git stash drop
+}==git stash pop
+
+git remote
+git remote -v
+git push origin branch-name
+git checkout -b branch-name origin/branch-name
+git pull
+git branch --set-upstream-to=origin/dev dev
+
+git rebase
+
+git tag <tagname>
+git tag -a <tagname> -m "blablabla..."
+git tag
+

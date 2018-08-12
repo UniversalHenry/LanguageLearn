@@ -32,3 +32,10 @@ git push -u origin master(First time)
 git push origin master
 
 git clone git@github.com:universalhenry/XXX.git
+
+git branch
+git branch <name>
+git checkout <name>
+git checkout -b <name>
+git merge <name>
+git branch -d <name>

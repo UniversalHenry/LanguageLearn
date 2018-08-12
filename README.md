@@ -1,6 +1,6 @@
 # LanguageLearn
 
-learning C++ and Python　(with VScode & Pycharm on ubuntu)
+learning C++ & Python　(with VScode & Pycharm on ubuntu)
 
 mainly using:
 

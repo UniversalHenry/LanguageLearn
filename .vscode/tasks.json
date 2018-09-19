@@ -4,9 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "echo",
             "type": "shell",
-            "command": "g++ ${file} -o ${fileBasenameNoExtension}.debug.out -g"
+            "command": "g++",
+            "args": [
+                "${file}",
+                "-g",
+                // "${fileBasenameNoExtension}.out"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }

@@ -8,11 +8,12 @@ int main(void) {
   long M = 1, N = 1;
   cin >> M >> N;
   long rec = 0, tmprec = 0;
-  bool flag[N + 1];
-  //for(long i = 0; i<=N;i++)flag[i]=true;
+  cout << N%M;
     
     cout << "Program finished.";
     int test;
     cin >> test;
     return 0;
   }
+
+  1010101010 1010201010

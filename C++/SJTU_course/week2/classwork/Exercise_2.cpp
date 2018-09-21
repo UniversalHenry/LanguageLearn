@@ -338,5 +338,7 @@ int main()
             cout << "Convex\n";
         }
     }
-    system("pause");
+    cout << "ProgramFinished";
+    int test;
+    cin >> test;
 }

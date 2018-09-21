@@ -111,5 +111,7 @@ int main()
             }
         }
     }
-    system("pause");
+    cout << "ProgramFinished.";
+    int test;
+    cin >> test;
 }

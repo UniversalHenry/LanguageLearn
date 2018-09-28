@@ -10,7 +10,8 @@
             "args": [
                 "${file}",
                 "-g",
-                // "${fileBasenameNoExtension}.out"
+                "-o",
+                "\"${workspaceFolder}/exefile/${fileBasenameNoExtension}.out\"",
             ],
             "group": {
                 "kind": "build",

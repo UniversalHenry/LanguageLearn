@@ -6,6 +6,8 @@
         "vector": "cpp",
         "cstdlib": "cpp",
         "*.tcc": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "ostream": "cpp",
+        "stdexcept": "cpp"
     }
 }

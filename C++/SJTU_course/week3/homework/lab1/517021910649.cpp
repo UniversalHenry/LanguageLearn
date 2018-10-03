@@ -37,9 +37,10 @@ class Token_stream{
     stringstream input; // Holds the input string stream
     double ANS; // Record the ANS
     double res; // Record the temporary result when calculating
+	int bracket; // Record the number of bracket
     bool err; // Record whether the result is error
 public:
-	Token_stream():full(0),buffer(0),ANS(0),res(0),err(0){input.clear();} // Initialize the Token stream
+	Token_stream():full(0),buffer(0),ANS(0),res(0),bracket(0),err(0){input.clear();} // Initialize the Token stream
 	Token get(); // Get the charactors from input stream
 	void putback(Token t); // Returns symbol to buffer. If 'full' = true, get() will use symbol from buffer
     stringstream& get_input(){return input;} // Input stream for read and write
@@ -58,9 +59,9 @@ Token Token_stream::get(){
     char ch;
     get_input() >> ch;  // Otherwise start looking for characters in input stream
 	switch (ch) {
+	case '(':{bracket++;return Token(ch);}
+	case ')':{bracket--;if(bracket<0)throw "left bracket miss";return Token(ch);}
 	case ';':
-	case '(':
-	case ')':
 	case '+':
 	case '-':
 	case '*':
@@ -96,7 +97,7 @@ Token Token_stream::get(){
     }
 }
 
-double primary(); // Declaration of primary(),processes semicolons,bracket, numbers and ANS
+double primary(); // Declaration of primary(),processes bracket, numbers and ANS
 double term(); // Declaration of term(),performs '*', '/', '!' and '%'
 double expression(); // Declaration of expression(),performs '+' and '-' operations
 
@@ -133,6 +134,7 @@ void Token_stream::tidy(){
 	get_input().str("");
 	if(!err)ANS = res;
 	err = false;
+	bracket = 0;
 	res = 0;
 	full = false;
 	buffer = Token(0);
@@ -148,14 +150,14 @@ Token_stream ts;
 /****************************************************************************************************/
 // Definition of primary()
 /****************************************************************************************************/
-// Processes semicolons,bracket, numbers and ANS
+// Processes bracket, numbers and ANS
 double primary(){
 	Token t = ts.get(); // Get a character
 	switch (t.get_kind()) {
 	case '(': 
 	{	double d = expression(); // Perform calculations in semicolons
 		t = ts.get(); // Get a ')' closing character
-		if (t.get_kind() != ')')throw "bracket"; // If there wasn't any ')' return an error
+		if (t.get_kind() != ')')throw "right bracket miss"; // If there wasn't any ')' return an error
 		return d;
 	}
 	case '-': // For negative digits

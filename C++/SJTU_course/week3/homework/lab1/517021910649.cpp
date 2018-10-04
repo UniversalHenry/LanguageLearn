@@ -150,24 +150,65 @@ Token_stream ts;
 /****************************************************************************************************/
 // Definition of primary()
 /****************************************************************************************************/
-// Processes bracket, numbers and ANS
+// Processes bracket, numbers, ANS, signal and '!'
 double primary(){
 	Token t = ts.get(); // Get a character
-	switch (t.get_kind()) {
+	switch (t.get_kind()){
 	case '(': 
 	{	double d = expression(); // Perform calculations in semicolons
 		t = ts.get(); // Get a ')' closing character
 		if (t.get_kind() != ')')throw "right bracket miss"; // If there wasn't any ')' return an error
+		while(true){// Check factorial
+			Token t = ts.get();
+			switch (t.get_kind()){
+				case '!': // Factorial
+				{   
+					long x = d;
+					if(abs(abs(x)-d)>1e-10)throw "factorial";
+					for (int i = 1; i < d; i++) { // Get a multiplication of all numbers before x (including x)
+						x*=i;
+					}
+					if (x == 0) d = 1;
+					else d = x;
+					break;
+				}
+				default:
+					ts.putback(t); // If nothing was done return character to the stream
+					if (d == -0) return 0; // Change -0 to 0 when it was multiplied or divided by negative digit
+					return d; // Return new or unchanged value of 'left'
+			}
+		}
 		return d;
 	}
 	case '-': // For negative digits
-		return -term(); // Return negative digit
+		return -primary(); // Return negative digit
 	case '+': // For positive digits
-		return term(); // Return positive digit
+		return primary(); // Return positive digit
 	case Token::number: // If Token is a number
-		return t.get_value(); // Return the number
 	case Token::ANS: // If Token is ANS
-		return t.get_value(); // Return the value of ANS
+	{	double d = t.get_value();
+		while(true){// Check factorial
+			Token t = ts.get();
+			switch (t.get_kind()){
+				case '!': // Factorial
+				{   
+					long x = d;
+					if(abs(abs(x)-d)>1e-10)throw "factorial";
+					for (int i = 1; i < d; i++) { // Get a multiplication of all numbers before x (including x)
+						x*=i;
+					}
+					if (x == 0) d = 1;
+					else d = x;
+					break;
+				}
+				default:
+					ts.putback(t); // If nothing was done return character to the stream
+					if (d == -0) return 0; // Change -0 to 0 when it was multiplied or divided by negative digit
+					return d; // Return new or unchanged value of 'left'
+			}
+		}
+		return d; // Return the number
+	}
 	default:
 		throw "primary"; // Return an error if an inappropriate character was provided
 	}
@@ -177,7 +218,7 @@ double primary(){
 /****************************************************************************************************/
 // Definition of term()
 /****************************************************************************************************/
-// Performs '*', '/', '!' and '%'
+// Performs '*', '/' and '%'
 double term(){
 	double left = primary(); // Get a number
 	while(true) {
@@ -191,22 +232,12 @@ double term(){
 			if(d == 0)throw "division"; // Division by zero is prohibited
 			left /= d;
 			break;
-		}
-        case '!': // Factorial
-            {   
-                int x = left;
-                if(abs(abs(x)-left)>1e-10)throw "factorial";
-                for (int i = 1; i < left; i++) { // Get a multiplication of all numbers before x (including x)
-                    x*=i;
-                }
-                if (x == 0) left = 1;
-                else left = x;
-                break;
-            }        
+		}        
         case '%': // Modulo
             {
                 double d = primary();
                 if(d == 0)throw "mudulo";
+				if((abs(long(d)-d) > 1e-10)||(abs(long(left)-left) > 1e-10))throw "mudulo not int";
                 left = fmod(left,d); // Use fmod to divide floating-point numbers with remainder
                 break;
             }
@@ -247,7 +278,7 @@ double expression(){
 /****************************************************************************************************/
 int main(void){
     // Reading input file and calculate the output result
-    ifstream in_file("lab1_input.txt");
+    ifstream in_file("input.txt");
 	string input;
 	vector <string> output;
 	while(getline(in_file,input)){
@@ -257,7 +288,7 @@ int main(void){
     }
     in_file.close();
     // Output the result to the output file
-    ofstream out_file("lab1_output.txt",ios_base::trunc);
+    ofstream out_file("output.txt",ios_base::trunc);
     for(int i=0;i<output.size();i++){
 		if(i < output.size()-1)out_file<<output.at(i)<<endl;
 		if(i == output.size()-1)out_file<<output.at(i);

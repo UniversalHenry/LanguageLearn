@@ -26,12 +26,11 @@ using namespace std;
         
 // };
 
-int main(void){
 
-    // cout << "Input the customer ID:";
-    // string custom_id;
-    // cin >> custom_id;
-    
+
+
+
+int main(void){
     double dur;
     clock_t start,end;
     start = clock();

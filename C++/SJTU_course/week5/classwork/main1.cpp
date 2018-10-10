@@ -33,7 +33,7 @@ int main(void){
     dur = (double)(end - start);
     
     cout << "\nOrder Number:" << order_num << "\t";
-    printf("UseTime:%f\n",(dur/CLOCKS_PER_SEC));
+    printf("\nUseTime:%f\n",(dur/CLOCKS_PER_SEC));
 
 	cout << "\nProgram finished.";
 	int test;

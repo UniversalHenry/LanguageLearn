@@ -84,6 +84,7 @@ class GoodFile{
         GoodFile(string d="data/good."):open_file_name(""),dir(d),open(0){};
         void add_file(const string &s){name.push_back(dir+s);}
         void open_file(const int &i){if(open)file.close();file.open(name.at(i).c_str());open_file_name=name.at(i);open=true;}
+        void close_file(){if(open)file.close();open=false;open_file_name="";}
         ~GoodFile(){if(open)file.close();}
 }good_file;
 
@@ -97,6 +98,7 @@ class BuyerFile{
         BuyerFile(string d="data/buyer."):open_file_name(""),dir(d),open(0){};
         void add_file(const string &s){name.push_back(dir+s);}
         void open_file(const int &i){if(open)file.close();file.open(name.at(i).c_str());open_file_name=name.at(i);open=true;}
+        void close_file(){if(open)file.close();open=false;open_file_name="";}
         ~BuyerFile(){if(open)file.close();}
 }buyer_file;
 
@@ -110,6 +112,7 @@ class OrderFile{
         OrderFile(string d="data/order."):open_file_name(""),dir(d),open(0){};
         void add_file(const string &s){name.push_back(dir+s);}
         void open_file(const int &i){if(open)file.close();file.open(name.at(i).c_str());open_file_name=name.at(i);open=true;}
+        void close_file(){if(open)file.close();open=false;open_file_name="";}
         ~OrderFile(){if(open)file.close();}
 }order_file;
 
@@ -184,4 +187,3 @@ string find_val(const string &content,const string &key){
     ss >> s;
     return s;
 }
-

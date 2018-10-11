@@ -23,9 +23,10 @@ class Good{
         string good_name;
         string description;
         double price;
+        int sold;
         vector<int> orderid;
         Good(const string &content):goodid(find_val(content,"goodid")),salerid(find_val(content,"salerid")),
-            good_name(find_val(content,"good_name")){stringstream ss;ss << find_val(content,"price");ss >> price;}
+            good_name(find_val(content,"good_name")),sold(0){stringstream ss;ss << find_val(content,"price");ss >> price;}
         void add_order(const int &order){orderid.push_back(order);}
 };
 
@@ -35,9 +36,11 @@ class Buyer{
         string contactphone;
         string address;
         string buyername;
+        int buy_num;
+        double payment;
         vector<int> orderid;
         Buyer(const string &content):buyerid(find_val(content,"buyerid")),contactphone(find_val(content,"contactphone")),
-            address(find_val(content,"address")),buyername(find_val(content,"buyername")){};
+            address,buy_num(0),payment(0)(find_val(content,"address")),buyername(find_val(content,"buyername")){};
         void add_order(const int &order){orderid.push_back(order);}
 };
 

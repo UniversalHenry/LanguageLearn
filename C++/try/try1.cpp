@@ -19,9 +19,8 @@ int main(void){
     start = clock();
 
 // try here
-    bool t = false;
-    cin >> t;
-    cout << endl << t;
+    int x = 1477418957;
+    cout << x;
     
 // time stop
     end = clock();

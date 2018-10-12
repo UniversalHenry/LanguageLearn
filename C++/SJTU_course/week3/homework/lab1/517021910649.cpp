@@ -53,6 +53,10 @@ public:
 // Returns symbol to buffer. If 'full' = true, get() will use symbol from buffer
 void Token_stream::putback(Token t){buffer=t; full=true;}
 
+const double MAX = 8.95e307; // The maximum value of the number
+const double MIN = -8.95e307; // The minimum value of the number
+const double EPS = 1e-10; // The minimun precision
+
 // Get the charactors from input stream
 Token Token_stream::get(){
     if(full){full=false;return buffer;} // If buffer is not empty, return value from it
@@ -83,6 +87,8 @@ Token Token_stream::get(){
     {	get_input().unget(); // If it is a number then return it to the stream
 		double val;
         get_input() >> val; // Read the complete value
+		if(val > MAX)throw "too large input";
+		if(val < MIN)throw "too small input";
 		return Token(Token::number,val);
 	}
     default:
@@ -163,12 +169,13 @@ double primary(){
 			switch (t.get_kind()){
 				case '!': // Factorial
 				{   
-					long x = d;
-					if(abs(abs(x)-d)>1e-10)throw "factorial";
+					double x = d;
+					if(abs(fmod(x,1))>EPS || x<=-EPS)throw "factorial";
 					for (int i = 1; i < d; i++) { // Get a multiplication of all numbers before x (including x)
 						x*=i;
+						if(x > MAX)throw "too large factorial";
 					}
-					if (x == 0) d = 1;
+					if (abs(x) < EPS) d = 1;
 					else d = x;
 					break;
 				}
@@ -192,12 +199,13 @@ double primary(){
 			switch (t.get_kind()){
 				case '!': // Factorial
 				{   
-					long x = d;
-					if(abs(abs(x)-d)>1e-10)throw "factorial";
+					double x = d;
+					if(abs(fmod(x,1))>EPS || x<=-EPS)throw "factorial";
 					for (int i = 1; i < d; i++) { // Get a multiplication of all numbers before x (including x)
 						x*=i;
+						if(x > MAX)throw "too large factorial";
 					}
-					if (x == 0) d = 1;
+					if (abs(x) < EPS) d = 1;
 					else d = x;
 					break;
 				}
@@ -225,20 +233,24 @@ double term(){
 		Token t = ts.get(); // Get a new character
 		switch(t.get_kind()){
 		case '*': // Multiplication
-			left *= primary(); 
+		{	double d = primary();
+			if((log10(abs(left))+log10(abs(d)))>log10(MAX))throw "too large multiplication"; // Too large multiplication is prohibited
+			left *= d;
 			break;
+		}
 		case '/': // Division
 		{	double d = primary(); 
-			if(d == 0)throw "division"; // Division by zero is prohibited
+			if(d == double(0))throw "division by zero"; // Division by zero is prohibited
+			if((log10(abs(left))-log10(abs(d)))>log10(MAX))throw "too large division"; // Too large division is prohibited
 			left /= d;
 			break;
 		}        
         case '%': // Modulo
             {
                 double d = primary();
-                if(d == 0)throw "mudulo";
-				if((abs(long(d)-d) > 1e-10)||(abs(long(left)-left) > 1e-10))throw "mudulo not int";
-                left = fmod(left,d); // Use fmod to divide floating-point numbers with remainder
+                if(d == double(0))throw "mudulo by zero"; // Mudulo by zero is prohibited
+				if((abs(fmod(d,1)) > EPS)||abs(fmod(left,1)) > EPS)throw "mudulo not int"; // Mudulo not int is prohibited
+                left = fmod(left-fmod(left,1),d-fmod(d,1)); // Use fmod to divide floating-point numbers with remainder
                 break;
             }
 		default:
@@ -260,11 +272,21 @@ double expression(){
 		Token t = ts.get();
 		switch(t.get_kind()){
 		case '+':
-			left += term(); // Addition
+		{	
+			double d = term();
+			if(left > MAX || d > MAX)throw "too large number to add";
+			if(left < MIN || d < MIN)throw "too small number to add";
+			left += d; // Addition
 			break;
+		}
 		case '-':
-			left -= term(); // Subtraction
+		{	
+			double d = term();
+			if(left > MAX || d > MAX)throw "too large number to minus";
+			if(left < MIN || d < MIN)throw "too small number to minus";
+			left -= d; // Subtraction
 			break;
+		}
 		default:
 			ts.putback(t); // If nothing was done return character to the stream
 			return left; // Return the new or unchanged value of 'left'

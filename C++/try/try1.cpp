@@ -19,8 +19,10 @@ int main(void){
     start = clock();
 
 // try here
-    int x = 1477418957;
-    cout << x;
+    double x = 1e-100;
+    double y = 1e-200;
+    double z = x - y;
+    cout << z;
     
 // time stop
     end = clock();

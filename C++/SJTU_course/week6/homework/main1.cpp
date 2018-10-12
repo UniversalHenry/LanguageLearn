@@ -9,32 +9,36 @@ using namespace std;
 
 int main(void){
 // time start
-    double dur;
+/*    double dur;
     clock_t start,end;
     start = clock();
-
-// try here
+*/
+// main function
 	string input;
 	char ch;
 	string output;
-	while(cin.get(ch)){if(isalpha(ch)||isdigit(ch))input += ch;}
+	while(cin.get(ch)){if(ch=='\n')break;if(isalpha(ch)||isdigit(ch))input += ch;}
 	if(input.length()){
-		int a=floor(sqrt(input.length()));
-		int b=a+1;
+//		cout << input << endl;
+		int b=ceil(sqrt(input.length()));
+		int a=b-1;
 		if(a*b<input.length())a=b;
+//		cout << a << '\t' << b;
 		for(int i=0; i<b;i++){
 			for(int j=0; j<a;j++){
-				output += input[i+b*j];
+				cout << input[i+b*j];
 			}
+			cout << ' ';
 		}
 	}else{
-	cout << "Null";
+		cout << "Null";
 	}
 
 // time stop
-    end = clock();
+/*    end = clock();
     dur = (double)(end - start);
     printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
+*/
 	cout << "\nProgram finished.";
 	int test;
 	cin >> test;

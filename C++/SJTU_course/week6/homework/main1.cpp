@@ -17,7 +17,7 @@ int main(void){
 	string input;
 	char ch;
 	string output;
-	while(cin.get(ch)){if(ch=='\n')break;if(isalpha(ch)||isdigit(ch))input += ch;}
+	while(cin.get(ch)){if(ch=='\n')break;if(isalpha(ch))input += tolower(ch);if(isdigit(ch))input += ch;}
 	if(input.length()){
 //		cout << input << endl;
 		int b=ceil(sqrt(input.length()));
@@ -26,7 +26,7 @@ int main(void){
 //		cout << a << '\t' << b;
 		for(int i=0; i<b;i++){
 			for(int j=0; j<a;j++){
-				cout << input[i+b*j];
+				if((i+b*j)<input.length())cout << input[i+b*j];
 			}
 			cout << ' ';
 		}
@@ -39,8 +39,9 @@ int main(void){
     dur = (double)(end - start);
     printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
 */
-	cout << "\nProgram finished.";
+/*	cout << "\nProgram finished.";
 	int test;
 	cin >> test;
+*/
     return 0;
 }

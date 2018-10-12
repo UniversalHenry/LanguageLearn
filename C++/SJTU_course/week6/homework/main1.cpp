@@ -28,18 +28,17 @@ int main(void){
 			for(int j=0; j<a;j++){
 				if((i+b*j)<input.length())cout << input[i+b*j];
 			}
-			cout << ' ';
+			if(i<b-1)cout << ' ';
 		}
 	}else{
 		cout << "Null";
 	}
-
 // time stop
 /*    end = clock();
     dur = (double)(end - start);
     printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
-*/
-/*	cout << "\nProgram finished.";
+
+	cout << "\nProgram finished.";
 	int test;
 	cin >> test;
 */

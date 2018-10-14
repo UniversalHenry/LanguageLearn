@@ -9,10 +9,10 @@ using namespace std;
 
 int main(void){
 // time start
-/*    double dur;
+    double dur;
     clock_t start,end;
     start = clock();
-*/
+
 // main function
 	string input;
 	char ch;
@@ -34,13 +34,11 @@ int main(void){
 		cout << "Null";
 	}
 // time stop
-/*    end = clock();
+    end = clock();
     dur = (double)(end - start);
     printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
 
 	cout << "\nProgram finished.";
-	int test;
-	cin >> test;
-*/
+	getchar();
     return 0;
 }

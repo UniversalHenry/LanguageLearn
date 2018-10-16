@@ -234,14 +234,14 @@ double term(){
 		switch(t.get_kind()){
 		case '*': // Multiplication
 		{	double d = primary();
-			if((log10(abs(left))+log10(abs(d)))>log10(MAX))throw "too large multiplication"; // Too large multiplication is prohibited
+			if(left!=0 && d!=0 && (log10(abs(left))+log10(abs(d)))>log10(MAX))throw "too large multiplication"; // Too large multiplication is prohibited
 			left *= d;
 			break;
 		}
 		case '/': // Division
 		{	double d = primary(); 
 			if(d == double(0))throw "division by zero"; // Division by zero is prohibited
-			if((log10(abs(left))-log10(abs(d)))>log10(MAX))throw "too large division"; // Too large division is prohibited
+			if(left!=0 && (log10(abs(left))-log10(abs(d)))>log10(MAX))throw "too large division"; // Too large division is prohibited
 			left /= d;
 			break;
 		}        

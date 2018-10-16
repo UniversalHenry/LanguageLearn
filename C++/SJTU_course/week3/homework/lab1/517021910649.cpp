@@ -173,6 +173,7 @@ double primary(){
 					if(abs(fmod(x,1))>EPS || x<=-EPS)throw "factorial";
 					for (int i = 1; i < d; i++) { // Get a multiplication of all numbers before x (including x)
 						x*=i;
+						x = floor(x);
 						if(x > MAX)throw "too large factorial";
 					}
 					if (abs(x) < EPS) d = 1;
@@ -203,6 +204,7 @@ double primary(){
 					if(abs(fmod(x,1))>EPS || x<=-EPS)throw "factorial";
 					for (int i = 1; i < d; i++) { // Get a multiplication of all numbers before x (including x)
 						x*=i;
+						x = floor(x);
 						if(x > MAX)throw "too large factorial";
 					}
 					if (abs(x) < EPS) d = 1;
@@ -241,7 +243,7 @@ double term(){
 		case '/': // Division
 		{	double d = primary(); 
 			if(d == double(0))throw "division by zero"; // Division by zero is prohibited
-			if(left!=0 && (log10(abs(left))-log10(abs(d)))>log10(MAX))throw "too large division"; // Too large division is prohibited
+			if(left!=0 && d!=0 && (log10(abs(left))-log10(abs(d)))>log10(MAX))throw "too large division"; // Too large division is prohibited
 			left /= d;
 			break;
 		}        
@@ -304,6 +306,7 @@ int main(void){
 	string input;
 	vector <string> output;
 	while(getline(in_file,input)){
+		// cout << input << endl;
         ts.get_input() << input;
         output.push_back(ts.calculate());
         ts.tidy();
@@ -312,13 +315,13 @@ int main(void){
     // Output the result to the output file
     ofstream out_file("output.txt",ios_base::trunc);
     for(int i=0;i<output.size();i++){
+		// cout << output.at(i) << endl;
 		if(i < output.size()-1)out_file<<output.at(i)<<endl;
 		if(i == output.size()-1)out_file<<output.at(i);
 	}
     out_file.close();
 
 	// cout << "\nProgram finished.";
-	// int test;
-	// cin >> test;
+	// getchar();
     return 0;
 }

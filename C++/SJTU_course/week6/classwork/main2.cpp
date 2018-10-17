@@ -42,8 +42,6 @@ class Buyer{
         string contactphone;
         string address;
         string buyername;
-        int buy_num_wday[7] = {0};
-        int payment_wday[7] = {0};
         int buy_num;
         double payment;
         vector<int> orderid;
@@ -259,25 +257,26 @@ while(true){
     // good
     {   
         set<Good_By_Sold>::iterator goodid_by_sold;
-        goodid_by_sold = goods_by_sold.begin();
+        goodid_by_sold = goods_by_sold.end();
         n=0;
-        while(goodid_by_sold!=goods_by_sold.end()){
+        while(goodid_by_sold!=goods_by_sold.begin()){
+            goodid_by_sold--;
             the_good = goods.find(goodid_by_sold->id);
             n++;
             cout << "ORDER::" << n << endl;
             cout << "GoodID:" << the_good->first << endl;
             cout << "Sold:" << the_good->second.sold << endl;
             cout << "****************************************************" << endl;
-            goodid_by_sold++;
             if(n>=print_num)break;
         }
     }
     // buyer
     {   
         set<Buyer_By_Pay>::iterator buyerid_by_pay;
-        buyerid_by_pay = buyers_by_pay.begin();
+        buyerid_by_pay = buyers_by_pay.end();
         n=0;
-        while(buyerid_by_pay!=buyers_by_pay.end()){
+        while(buyerid_by_pay!=buyers_by_pay.begin()){
+            buyerid_by_pay--;
             the_buyer = buyers.find(buyerid_by_pay->id);
             n++;
             cout << "ORDER::" << n << endl;
@@ -285,7 +284,6 @@ while(true){
             cout << "Pay:" << the_buyer->second.payment << endl;
             cout << "NumberOfOrders:" << the_buyer->second.buy_num << endl;
             cout << "****************************************************" << endl;
-            buyerid_by_pay++;
             if(n>=print_num)break;
         }
     }
@@ -331,6 +329,6 @@ bool is_happen(const long &createtime,const string &date){
     int yy = d / 10000;
     int mm = (d % 10000)/100;
     int dd = d % 100;
-    if(p->tm_year == yy && p->tm_mon == (mm - 1) && p->tm_mday == dd)return true;
+    if((p->tm_year+1900) == yy && p->tm_mon == (mm - 1) && p->tm_mday == dd)return true;
     return false;
 }

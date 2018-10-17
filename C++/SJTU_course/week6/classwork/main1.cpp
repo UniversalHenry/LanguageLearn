@@ -235,7 +235,7 @@ set<Good_By_Sold> goods_by_sold;
             for(int i=0; i<n; i++){
                 the_order = orders.find(the_buyer->second.orderid[i]);
                 int wday = get_wday(the_order->second.createtime);
-                the_buyer->second.buy_num_wday[wday] += the_order->second.amount;
+                the_buyer->second.buy_num_wday[wday] ++;
                 the_good = goods.find(the_order->second.goodid);
                 the_buyer->second.payment_wday[wday] += the_order->second.amount*the_good->second.price;
             }

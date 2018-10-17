@@ -73,46 +73,57 @@ void read_english(set<string> &english)
 int main()
 {   
     // TODO: your code here
-    set<string> english;
-    set<string> record;
-    vector<string> tmpld;
-    queue<vector<string>> search;
-    queue<vector<string>> ans;
-    string start,dest,tmps;
-    read_english(english);
-    while(true){   
-        tmpld.clear();record.clear();tmps.clear();
+    set<string> english;        // initialize the english dictionary
+    set<string> record;         // initialize record for the word that has appeared before
+    vector<string> tmpld;       // initialize temporary ladder
+    queue<vector<string>> search;   // initialize the search queue
+    queue<vector<string>> ans;      // initialize the answer queue
+    string start,dest,tmps;     // initialize start ,destination and temporary words
+    read_english(english);      // read the english dictionary
+    while(true){
+        // clear the variables
+        tmpld.clear();
+        record.clear();
+        tmps.clear();
         while(!search.empty())search.pop();
         while(!ans.empty())ans.pop();
+        // input start and destinationthe words
         input_words(start,dest);
-        for(int i=0;i<start.size();i++)if(isalpha(start[i]))tmps+=tolower(start[i]);
-        start=tmps;tmps="";
-        for(int i=0;i<dest.size();i++)if(isalpha(dest[i]))tmps+=tolower(dest[i]);
-        dest=tmps;tmps="";
-        int len=dest.size();
+        for(int i = 0; i < start.size(); i++)if(isalpha(start[i]))tmps += tolower(start[i]);    // change words into valid form
+        start = tmps;
+        tmps = "";
+        for(int i = 0; i < dest.size(); i++)if(isalpha(dest[i]))tmps += tolower(dest[i]);
+        dest = tmps;
+        tmps = "";
+        int len = dest.size();    // record the length of word
+        // start to find the word ladders
         tmpld.push_back(start);
         search.push(tmpld);
-        int found_len=0;
+        int found_len = 0;        // record the length of the shortest word ladder, 0 represents not found yet
         while(!search.empty()){
-            tmpld=search.front();search.pop();
-            if(found_len && found_len<tmpld.size())break;
-            if(tmpld.back()==dest){ans.push(tmpld);found_len=tmpld.size();}
-            if(!found_len){
+            tmpld = search.front(); search.pop();
+            if(found_len && found_len<tmpld.size())break;       // if the corrent ladder if longer than found ladder, break
+            if(tmpld.back() == dest){           // if found ladder, record it
+                ans.push(tmpld);
+                found_len = tmpld.size();
+            }
+            if(!found_len){                     // if haven't found yet, generate longer ladders
                 tmps = tmpld.back();
-                for(int i=0;i<26;i++)for(int j=0;j<len;j++){
-                    char ch='a'+i; string tmps1=tmps; tmps1[j]=ch;
-                    if(tmps1!=tmps && english.count(tmps1) && !record.count(tmps1)){
-                        tmpld.push_back(tmps1);
+                for(int i = 0; i < 26; i++)for(int j = 0; j < len; j++){
+                    char ch = 'a' + i; string tmps1 = tmps; tmps1[j] = ch;      // generate words differ with one char
+                    if(tmps1 != tmps && english.count(tmps1) && !record.count(tmps1)){        // if the words is valid and not appeared before
+                        tmpld.push_back(tmps1);     // add the corrent ladder to search
                         search.push(tmpld);
                         tmpld.pop_back();
-                        if(tmps1!=dest)record.insert(tmps1);
+                        if(tmps1 != dest)record.insert(tmps1);    // add the corrent ladder to record
                     }
                 }
             }
         }
-        if(ans.empty())cout << "No word ladder exists!" << endl;
-        while(!ans.empty()){
-            tmpld=ans.front();ans.pop();
+        if(ans.empty())cout << "No word ladder exists!" << endl;    // if no answer
+        while(!ans.empty()){        // show all answers
+            tmpld = ans.front();
+            ans.pop();
             show_ans(tmpld);
         }
     }

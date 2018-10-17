@@ -35,7 +35,8 @@ int main(void){
 // time stop
     end = clock();
     dur = (double)(end - start);
-    printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
+    printf("\nUseTime:%f",(dur / CLOCKS_PER_SEC));
 	cout << "\nProgram finished.";
     cin >> dur;
+    return 0;
 }

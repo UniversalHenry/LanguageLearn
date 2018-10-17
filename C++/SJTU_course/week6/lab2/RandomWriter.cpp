@@ -30,7 +30,7 @@ void model_read(ifstream &file_input, const int &order, map<string, vector<char>
 void random_write(const int &order, map<string, vector<char>> &model);
 
 // choose the random output char according to the model
-char select_char(map<string, vector<char>>::iterator &piece);
+char select_char(const map<string, vector<char>>::iterator &piece);
 
 void read_file(ifstream &file_input)
 {
@@ -53,8 +53,8 @@ int read_order()
         cout << "Please enter order number:";
         int order_num = -1;         // default initialize the order number as -1
         cin >> order_num;
-        if (cin.good() && order_num >= 0 && order_num<MAX_CHAR_NUM)return order_num;        // break the loop only when the input order number is valid
-        cin.clear();cin.sync();         // clear the cin for next input
+        if (cin.good() && order_num >= 0 && order_num < MAX_CHAR_NUM)return order_num;        // break the loop only when the input order number is valid
+        cin.clear(); cin.sync();         // clear the cin for next input
     }
 }
 
@@ -73,9 +73,9 @@ void model_read(ifstream &file_input, const int &order, map<string, vector<char>
                 vch.push_back(ch);
                 model.insert(make_pair(tmps,vch));
             }else{piece->second.push_back(ch);}         // if exist in the model, insert the new char into the piece of model
-            if(order>0)tmps = tmps.substr(1,tmps.size()-1);     // if the order number > 0, substr for new char to add
+            if(order > 0)tmps = tmps.substr(1,tmps.size()-1);     // if the order number > 0, substr for new char to add
         }
-        if(tmps.size()<order)tmps += ch;        // add the new char into the choosen string piece
+        if(tmps.size() < order)tmps += ch;        // add the new char into the choosen string piece
     }
     // when is the end of the file
     if(tmps.size() == order){        // if the choosen string piece not exist in the model, initialize and insert '\0' to it
@@ -96,7 +96,7 @@ void random_write(const int &order, map<string, vector<char>> &model)
     map<string, vector<char>>::iterator piece;
     // record the most frequent string pieces, and output one randomly
     vector<map<string, vector<char>>::iterator> freq_pieces;
-    piece = model.begin();freq_pieces.push_back(piece);
+    piece = model.begin(); freq_pieces.push_back(piece);
     while(piece != model.end()){
         if(piece->second.size() > freq_pieces.back()->second.size()){       // if find a more frequent piece, clear freq_pieces and insert
             freq_pieces.clear();
@@ -107,24 +107,24 @@ void random_write(const int &order, map<string, vector<char>> &model)
         }
         piece++;
     }
-    piece = freq_pieces[rand()/(double(RAND_MAX)+1)*(freq_pieces.size())];      // choose the most frequent piece randomly
+    piece = freq_pieces[rand() / (double(RAND_MAX) + 1) * freq_pieces.size()];      // choose the most frequent piece randomly
     cout << piece->first;
     // start to output the following characters
     tmps = piece->first;
-    for(int output_char = order;output_char<MAX_CHAR_NUM;output_char++){    // start from the order because one piece has been output
+    for(int output_char = order; output_char < MAX_CHAR_NUM; output_char++){    // start from the order because one piece has been output
         ch = select_char(piece);        // choose the random output char according to the model
         if(ch == '\0')break;        // if meet the '\0', which means end the output
         cout << ch;
         if(order > 0){      // if the order number > 0, add the new character to the string piece
-            tmps = tmps.substr(1,tmps.size()-1);
+            tmps = tmps.substr(1,tmps.size() - 1);
             tmps += ch;
             piece = model.find(tmps);
         }
     }
 }
 
-char select_char(map<string, vector<char>>::iterator &piece){        // choose the random output char according to the model
-    int index = rand()/(double(RAND_MAX)+1)*(piece->second.size());
+char select_char(const map<string, vector<char>>::iterator &piece){        // choose the random output char according to the model
+    int index = rand() / (double(RAND_MAX) + 1) * piece->second.size();
     return piece->second[index];
 }
 
@@ -147,7 +147,7 @@ int main()
     // time stop
     end = clock();
     dur = (double)(end - start);
-    printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
+    printf("\nUseTime:%f",(dur / CLOCKS_PER_SEC));
 	cout << "\nProgram finished.";
     cin >> dur;
     return 0;

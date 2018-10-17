@@ -1,6 +1,6 @@
 ## Data #######################################
 
-vscode/*
+.vscode/*
 exefile/*
 *.png
 *.jpeg

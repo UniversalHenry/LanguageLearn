@@ -19,7 +19,18 @@ int main(void){
     start = clock();
 
 // try here
-    for(int i=0;i<100;i++){cout << floor(rand()/double(RAND_MAX)*100) << endl;}
+    
+    char *wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    time_t timep = 1477418957;
+    struct tm *p;
+   
+    //time(&timep); /*获得time_t结构的时间，UTC时间*/
+    cout << timep;
+    p = gmtime(&timep); /*转换为struct tm结构的UTC时间*/
+    printf("%d/%d/%d ", 1900 + p->tm_year, 1 + p->tm_mon, p->tm_mday);
+    printf("%s %d:%d:%d\n", wday[p->tm_wday], p->tm_hour,
+        p->tm_min, p->tm_sec);
+
     
 // time stop
     end = clock();

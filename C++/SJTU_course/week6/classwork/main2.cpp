@@ -17,7 +17,8 @@ using namespace std;
 string find_val(const string &content,const string &key);
 template <class T> bool good_sold_less(const T& gid1,const T& gid2);
 int get_wday(const long &time);
-const string wdayname[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+bool is_validtime(const string &date);
+bool is_happen(const long &createtime,const string &date);
 
 // data
 
@@ -85,6 +86,18 @@ struct Good_By_Sold{
             g2 = goods.find(g.id);
             if(g1->second.sold==g2->second.sold)return(id<g.id);
             else return((g1->second.sold)<(g2->second.sold)); 
+        }
+};
+
+struct Buyer_By_Pay{
+    public:
+    string id;
+        bool operator< (const Buyer_By_Pay& b) const {
+            map<string,Buyer>::iterator b1,b2;
+            b1 = buyers.find(id);
+            b2 = buyers.find(b.id);
+            if(b1->second.payment==b2->second.payment)return(id<b.id);
+            else return((b1->second.payment)<(b2->second.payment)); 
         }
 };
 
@@ -189,7 +202,14 @@ map<string,Good>::iterator the_good;
 map<int,Order>::iterator the_order;
 
 set<Good_By_Sold> goods_by_sold;
-    /*
+set<Buyer_By_Pay> buyers_by_pay;
+
+while(true){
+    cout << "Please input the date(\":q\" to exit):";
+    string date;
+    cin >> date;
+    if(date == ":q")break;
+    if(!is_validtime(date))continue;
     // good amount
     {
         the_good = goods.begin();
@@ -197,7 +217,8 @@ set<Good_By_Sold> goods_by_sold;
             n = the_good->second.orderid.size();
             for(int i=0; i<n; i++){
                 the_order = orders.find(the_good->second.orderid[i]);
-                if(the_order->second.done)the_good->second.sold+=the_order->second.amount;
+                if(!is_happen(the_order->second.createtime,date))continue;
+                the_good->second.sold += the_order->second.amount;
             }
             the_good++;
         }
@@ -217,95 +238,56 @@ set<Good_By_Sold> goods_by_sold;
             n = the_buyer->second.orderid.size();
             for(int i=0; i<n; i++){
                 the_order = orders.find(the_buyer->second.orderid[i]);
-                if(the_order->second.done){
-                    the_buyer->second.buy_num+=the_order->second.amount;
-                    the_good = goods.find(the_order->second.goodid);
-                    the_buyer->second.payment+=the_order->second.amount*the_good->second.price;
-                }
+                if(!is_happen(the_order->second.createtime,date))continue;
+                the_buyer->second.buy_num+=the_order->second.amount;
+                the_good = goods.find(the_order->second.goodid);
+                the_buyer->second.payment+=the_order->second.amount*the_good->second.price;
             }
             the_buyer++;
         }
-    }
-    */
-    // buyer buy_num and payment by workday
-    {
+
         the_buyer = buyers.begin();
+        Buyer_By_Pay buyerid_by_pay;
         while(the_buyer!=buyers.end()){
-            n = the_buyer->second.orderid.size();
-            for(int i=0; i<n; i++){
-                the_order = orders.find(the_buyer->second.orderid[i]);
-                int wday = get_wday(the_order->second.createtime);
-                the_buyer->second.buy_num_wday[wday] += the_order->second.amount;
-                the_good = goods.find(the_order->second.goodid);
-                the_buyer->second.payment_wday[wday] += the_order->second.amount*the_good->second.price;
-            }
+            buyerid_by_pay.id = the_buyer->second.buyerid;
+            buyers_by_pay.insert(buyerid_by_pay);
             the_buyer++;
         }
     }
 
-// output result
-/*
-int print_num = 100;
+    int print_num = 3;
     // good
-    {
-        the_good = goods.begin();
+    {   
+        set<Good_By_Sold>::iterator goodid_by_sold;
+        goodid_by_sold = goods_by_sold.begin();
         n=0;
-        while(the_good!=goods.end()){
+        while(goodid_by_sold!=goods_by_sold.end()){
+            the_good = goods.find(goodid_by_sold->id);
             n++;
-            cout << "LINE::" << n << endl;
+            cout << "ORDER::" << n << endl;
             cout << "GoodID:" << the_good->first << endl;
-            cout << "Orders:" << the_good->second.orderid.size() << endl;
             cout << "Sold:" << the_good->second.sold << endl;
             cout << "****************************************************" << endl;
-            the_good++;
+            goodid_by_sold++;
             if(n>=print_num)break;
         }
     }
     // buyer
-    {
-        the_buyer = buyers.begin();
-        n=0;
-        while(the_buyer!=buyers.end()){
-            n++;
-            cout << "LINE::" << n << endl;
-            cout << "BuyerID:" << the_buyer->first << endl;
-            cout << "Orders:" << the_buyer->second.orderid.size() << endl;
-            cout << "Payment:" << the_buyer->second.payment << endl;
-            cout << "****************************************************" << endl;
-            the_buyer++;
-            if(n>=print_num)break;
-        }
-    }
-    // best sell goods
     {   
-        set<Good_By_Sold>::iterator goodid_by_sold;
-        goodid_by_sold = goods_by_sold.end();
+        set<Buyer_By_Pay>::iterator buyerid_by_pay;
+        buyerid_by_pay = buyers_by_pay.begin();
         n=0;
-        while(goodid_by_sold!=goods_by_sold.begin()){
-            goodid_by_sold--;
-            the_good = goods.find(goodid_by_sold->id);
+        while(buyerid_by_pay!=buyers_by_pay.end()){
+            the_buyer = buyers.find(buyerid_by_pay->id);
             n++;
-            cout << "LINE::" << n << endl;
-            cout << "GoodID:" << the_good->first << endl;
-            cout << "Orders:" << the_good->second.orderid.size() << endl;
-            cout << "Sold:" << the_good->second.sold << endl;
+            cout << "ORDER::" << n << endl;
+            cout << "BuyerID:" << the_buyer->first << endl;
+            cout << "Pay:" << the_buyer->second.payment << endl;
+            cout << "NumberOfOrders:" << the_buyer->second.buy_num << endl;
             cout << "****************************************************" << endl;
+            buyerid_by_pay++;
             if(n>=print_num)break;
         }
-    }
-*/
-while(true){
-    cout << "Please input the buyerID(\":q\" to exit):";
-    string buyerid;
-    cin >> buyerid;
-    if(buyerid == ":q")break;
-    the_buyer = buyers.find(buyerid);
-    if(the_buyer == buyers.end())continue;
-    for(int i = 0; i<7; i++){
-        cout << wdayname[i] << ":\tNumber of orders:" 
-            << the_buyer->second.buy_num_wday[i] <<"\tTotal amount:" 
-            << the_buyer->second.payment_wday[i] <<"\tAverage amount of an order:"
-            << the_buyer->second.payment_wday[i]/the_buyer->second.buy_num_wday[i] << endl;
     }
 }
 
@@ -328,9 +310,27 @@ string find_val(const string &content,const string &key){
     return s;
 }
 
-int get_wday(const long &time){
-    time_t timep=time;
+bool is_validtime(const string &date){
+    if(date.size()!=8)return false;
+    stringstream ss;
+    ss << date;
+    long d;
+    ss >> d;
+    if(d/10000 > 2018 || d /10000 <2010)return false;
+    return true;
+}
+
+bool is_happen(const long &createtime,const string &date){
+    time_t timep = createtime;
     struct tm *p;
     p = gmtime(&timep);
-    return p->tm_wday;
+    stringstream ss;
+    ss << date;
+    int d;
+    ss >> d;
+    int yy = d / 10000;
+    int mm = (d % 10000)/100;
+    int dd = d % 100;
+    if(p->tm_year == yy && p->tm_mon == (mm - 1) && p->tm_mday == dd)return true;
+    return false;
 }

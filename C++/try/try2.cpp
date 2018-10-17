@@ -26,6 +26,5 @@ int main(void){
     dur = (double)(end - start);
     printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
 	cout << "\nProgram finished.";
-	getchar();
-    return 0;
+    cin >> dur;
 }

@@ -1,9 +1,9 @@
 /*
  * File: WordLadder.cpp
  * --------------------
- * 陆昊成 517021910649
- * Name:
- * Student ID:
+ * [TODO: fill in your name and student ID]
+ * Name: 陆昊成
+ * Student ID: 517021910649
  * This file is the starter project for the word ladder problem of Lab 2.
  * [TODO: extend the documentation]
  */
@@ -71,7 +71,8 @@ void read_english(set<string> &english)
 }
 
 int main()
-{
+{   
+    // TODO: your code here
     set<string> english;
     set<string> record;
     vector<string> tmpld;

@@ -19,16 +19,12 @@ int main(void){
     start = clock();
 
 // try here
-    double x = 1e-100;
-    double y = 1e-200;
-    double z = x - y;
-    cout << z;
+    for(int i=0;i<100;i++){cout << floor(rand()/double(RAND_MAX)*100) << endl;}
     
 // time stop
     end = clock();
     dur = (double)(end - start);
     printf("\nUseTime:%f",(dur/CLOCKS_PER_SEC));
 	cout << "\nProgram finished.";
-	getchar();
-    return 0;
+    cin >> dur;
 }

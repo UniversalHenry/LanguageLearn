@@ -11,6 +11,8 @@
         "stdexcept": "cpp",
         "sstream": "cpp",
         "xstring": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "map": "cpp",
+        "utility": "cpp"
     }
 }

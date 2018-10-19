@@ -19,7 +19,7 @@ int main(void){
     start = clock();
 
 // try here
-
+    for(int i = 0; i < 100; i++) cout << "1 ";
     
 // time stop
     end = clock();

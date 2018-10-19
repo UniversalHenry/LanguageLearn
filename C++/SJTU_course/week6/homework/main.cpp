@@ -13,8 +13,8 @@ double calculate(const double &d1, const double &d2, const int &way){
         case 1:return d1 - d2;
         case 2:return d1 * d2;
         case 3:return d1 / d2;
-        // case 4:return d2 - d1;
-        // case 5:return d2 / d1;
+        case 4:return d2 - d1;
+        case 5:return d2 / d1;
     }
 }
 
@@ -22,17 +22,17 @@ bool calculate_all(const vector<double> &number, const double &target){
     // for(int i = 0; i < number.size(); i++)cout << number[i] << '\t';
     // cout << endl;
     if(number.size() == 1) return (number[0] == target);
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 6; i++){
         // cout << '/' << i << endl;
         int n = number.size();
         for(int j = 0; j < n - 1; j++){
             vector<double> tmpn(number.begin(),number.end());
-            // try{
+            try{
                 tmpn[j] = calculate(number[n - 1],number[j],i);
-            // }
-            // catch(...){
-            //     continue;
-            // }
+            }
+            catch(...){
+                continue;
+            }
             tmpn.pop_back();
             if(calculate_all(tmpn,target)) return true;
         }
@@ -71,3 +71,5 @@ int main(void){
 //     cin >> dur;
     return 0;
 }
+
+

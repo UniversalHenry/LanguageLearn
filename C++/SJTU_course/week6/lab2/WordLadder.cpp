@@ -121,11 +121,16 @@ int main()
             }
         }
         if(ans.empty())cout << "no ladder exists" << endl;    // if no answer
-        while(!ans.empty()){        // show all answers
+        else{
             tmpld = ans.front();
-            ans.pop();
             show_ans(tmpld);
         }
+        // while(!ans.empty()){        // show all answers
+        //     tmpld = ans.front();
+        //     ans.pop();
+        //     show_ans(tmpld);
+        // }
+        
     }
     return 0;
 }

@@ -120,7 +120,7 @@ int main()
                 }
             }
         }
-        if(ans.empty())cout << "No word ladder exists!" << endl;    // if no answer
+        if(ans.empty())cout << "no ladder exists" << endl;    // if no answer
         while(!ans.empty()){        // show all answers
             tmpld = ans.front();
             ans.pop();

@@ -13,16 +13,18 @@ double calculate(const double &d1, const double &d2, const int &way){
         case 1:return d1 - d2;
         case 2:return d1 * d2;
         case 3:return d1 / d2;
-        case 4:return d2 - d1;
-        case 5:return d2 / d1;
     }
 }
 
 bool calculate_all(const vector<double> &number, const double &target){
     // for(int i = 0; i < number.size(); i++)cout << number[i] << '\t';
     // cout << endl;
-    if(number.size() == 1) return (number[0] == target);
-    for(int i = 0; i < 6; i++){
+    if(number.size() == 1){
+        if(number[0] == target || -number[0] == target) return true;
+        if(number[0] != 0 && 1/number[0] == target) return true;
+        return false;
+    }
+    for(int i = 0; i < 4; i++){
         // cout << '/' << i << endl;
         int n = number.size();
         for(int j = 0; j < n - 1; j++){
@@ -59,7 +61,6 @@ int main(void){
 //     double dur;
 //     clock_t start,end;
 //     start = clock();
-
     if(calculate_all(number,target)) cout << "True";
     else cout << "False";
 

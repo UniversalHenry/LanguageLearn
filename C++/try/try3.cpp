@@ -3,71 +3,29 @@
 #include <cstdio>
 #include <fstream>
 #include <vector>
+#include <cmath>
+#include <sstream>
+#include <set>
+#include <map>
 #include <ctime>
+#include <cstring>
 
 using namespace std;
 
-double calculate(const double &d1, const double &d2, const int &way){
-    switch(way){
-        case 0:return d1 + d2;
-        case 1:return d1 - d2;
-        case 2:return d1 * d2;
-        case 3:return d1 / d2;
-        // case 4:return d2 - d1;
-        // case 5:return d2 / d1;
-    }
-}
-
-bool calculate_all(const vector<double> &number, const double &target){
-    // for(int i = 0; i < number.size(); i++)cout << number[i] << '\t';
-    // cout << endl;
-    if(number.size() == 1) return (number[0] == target);
-    for(int i = 0; i < 4; i++){
-        // cout << '/' << i << endl;
-        int n = number.size();
-        for(int j = 0; j < n - 1; j++){
-            vector<double> tmpn(number.begin(),number.end());
-            // try{
-                tmpn[j] = calculate(number[n - 1],number[j],i);
-            // }
-            // catch(...){
-            //     continue;
-            // }
-            tmpn.pop_back();
-            if(calculate_all(tmpn,target)) return true;
-        }
-    }
-    return false;
-}
 int main(void){
+// time start
+    double dur;
+    clock_t start,end;
+    start = clock();
 
-// main function here
-
-    vector<double> number;
-    vector<int> ways;
-    double tmp = 0;
-    int N = 0;
-
-    cin >> N;
-    cin >> tmp;
-    const double target = tmp;
-    for(int i = 0; i < N; i++){
-        cin >> tmp;
-        number.push_back(tmp);
-    }
-// // time start
-//     double dur;
-//     clock_t start,end;
-//     start = clock();
-
-    if(calculate_all(number,target)) cout << "True";
-    else cout << "False";
-
-// // time stop
-//     end = clock();
-//     dur = (double)(end - start);
-//     printf("\nUseTime:%f",(dur / CLOCKS_PER_SEC));
-//     cout << "\nProgram finished.";
-//     cin >> dur;
+// try here
+    for(int i = 0; i < 100; i++) cout << "1 ";
+    
+// time stop
+    end = clock();
+    dur = (double)(end - start);
+    printf("\nUseTime:%f",(dur / CLOCKS_PER_SEC));
+	cout << "\nProgram finished.";
+    cin >> dur;
     return 0;
 }

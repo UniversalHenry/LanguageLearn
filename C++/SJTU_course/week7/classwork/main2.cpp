@@ -19,6 +19,8 @@ template <class T> bool good_sold_less(const T& gid1,const T& gid2);
 int get_wday(const long &time);
 bool is_validtime(const string &date);
 bool is_happen(const long &createtime,const string &date);
+bool is_weekend(const long &createtime);
+bool is_night(const long &createtime);
 
 // data
 
@@ -43,6 +45,8 @@ class Buyer{
         string address;
         string buyername;
         int buy_num;
+        int buy_num_weekend[2] = {0};
+        int buy_num_night[2] = {0};
         double payment;
         vector<int> orderid;
         Buyer(const string &content):buyerid(find_val(content,"buyerid")),contactphone(find_val(content,"contactphone")),
@@ -75,6 +79,8 @@ map<string,Good> goods;
 map<string,Buyer> buyers;
 map<int,Order> orders;
 
+map<string,Buyer>::iterator the_buyer_tar;
+
 struct Good_By_Sold{
     public:
     string id;
@@ -94,8 +100,36 @@ struct Buyer_By_Pay{
             map<string,Buyer>::iterator b1,b2;
             b1 = buyers.find(id);
             b2 = buyers.find(b.id);
-            if(b1->second.payment==b2->second.payment)return(id<b.id);
-            else return((b1->second.payment)<(b2->second.payment)); 
+            double m = the_buyer_tar->second.buy_num_night[0] * the_buyer_tar->second.buy_num_night[0]
+                + the_buyer_tar->second.buy_num_night[1] * the_buyer_tar->second.buy_num_night[1]
+                + the_buyer_tar->second.buy_num_weekend[0] * the_buyer_tar->second.buy_num_weekend[0]
+                + the_buyer_tar->second.buy_num_weekend[1] * the_buyer_tar->second.buy_num_weekend[1];
+                double m1 = b1->second.buy_num_night[0] * b1->second.buy_num_night[0]
+                    + b1->second.buy_num_night[1] * b1->second.buy_num_night[1]
+                    + b1->second.buy_num_weekend[0] * b1->second.buy_num_weekend[0]
+                    + b1->second.buy_num_weekend[1] * b1->second.buy_num_weekend[1];
+                double m2 = b2->second.buy_num_night[0] * b2->second.buy_num_night[0]
+                    + b2->second.buy_num_night[1] * b2->second.buy_num_night[1]
+                    + b2->second.buy_num_weekend[0] * b2->second.buy_num_weekend[0]
+                    + b2->second.buy_num_weekend[1] * b2->second.buy_num_weekend[1];
+            if(m > 0){
+                double x1 = the_buyer_tar->second.buy_num_night[0] * b1->second.buy_num_night[0]
+                    + the_buyer_tar->second.buy_num_night[1] * b1->second.buy_num_night[1]
+                    + the_buyer_tar->second.buy_num_weekend[0] * b1->second.buy_num_weekend[0]
+                    + the_buyer_tar->second.buy_num_weekend[1] * b1->second.buy_num_weekend[1];
+                double x2 = the_buyer_tar->second.buy_num_night[0] * b2->second.buy_num_night[0]
+                    + the_buyer_tar->second.buy_num_night[1] * b2->second.buy_num_night[1]
+                    + the_buyer_tar->second.buy_num_weekend[0] * b2->second.buy_num_weekend[0]
+                    + the_buyer_tar->second.buy_num_weekend[1] * b2->second.buy_num_weekend[1];
+                x1 /= sqrt(m1 * m);
+                x2 /= sqrt(m2 * m);
+                if(x1 == x2)return(id<b.id);
+                    else return(x1 < x2);
+            }
+            else{
+                if(m1 == m2)return(id<b.id);
+                    else return(m1 < m2);
+            }
         }
 };
 
@@ -202,42 +236,24 @@ map<int,Order>::iterator the_order;
 set<Good_By_Sold> goods_by_sold;
 set<Buyer_By_Pay> buyers_by_pay;
 
-// while(true){
-//     cout << "Please input the date(\":q\" to exit):";
-//     string date;
-//     cin >> date;
-//     if(date == ":q")break;
-//     if(!is_validtime(date))continue;
-    // good amount
-    {
-        the_good = goods.begin();
-        while(the_good!=goods.end()){
-            n = the_good->second.orderid.size();
-            for(int i=0; i<n; i++){
-                the_order = orders.find(the_good->second.orderid[i]);
-                // if(!is_happen(the_order->second.createtime,date))continue;
-                the_good->second.sold += the_order->second.amount;
-            }
-            the_good++;
-        }
-
-        the_good = goods.begin();
-        Good_By_Sold goodid_by_sold;
-        while(the_good!=goods.end()){
-            goodid_by_sold.id = the_good->second.goodid;
-            goods_by_sold.insert(goodid_by_sold);
-            the_good++;
-        }
-    }
-    // buyer buy_num and payment
+while(true){
+    cout << "Please input the buyer ID(\":q\" to exit):";
+    string b_id;
+    cin >> b_id;
+    if(b_id == ":q")break;
+    the_buyer_tar = buyers.find(b_id);
+    if(the_buyer_tar == buyers.end())continue;
     {
         the_buyer = buyers.begin();
         while(the_buyer!=buyers.end()){
             n = the_buyer->second.orderid.size();
             for(int i=0; i<n; i++){
                 the_order = orders.find(the_buyer->second.orderid[i]);
-                // if(!is_happen(the_order->second.createtime,date))continue;
-                the_buyer->second.buy_num+=the_order->second.amount;
+                the_buyer->second.buy_num++;
+                if(is_weekend(the_order->second.createtime))the_buyer->second.buy_num_weekend[0]++;
+                    else the_buyer->second.buy_num_weekend[1]++;
+                if(is_night(the_order->second.createtime))the_buyer->second.buy_num_night[0]++;
+                    else the_buyer->second.buy_num_night[1]++;
                 the_good = goods.find(the_order->second.goodid);
                 the_buyer->second.payment+=the_order->second.amount*the_good->second.price;
             }
@@ -248,30 +264,33 @@ set<Buyer_By_Pay> buyers_by_pay;
         Buyer_By_Pay buyerid_by_pay;
         while(the_buyer!=buyers.end()){
             buyerid_by_pay.id = the_buyer->second.buyerid;
+            if(buyerid_by_pay.id == the_buyer_tar->second.buyerid){
+                the_buyer++;continue;
+            }
             buyers_by_pay.insert(buyerid_by_pay);
             the_buyer++;
         }
     }
 
     int print_num = 3;
-    // good
-    {   
-        set<Good_By_Sold>::iterator goodid_by_sold;
-        goodid_by_sold = goods_by_sold.end();
-        n=0;
-        while(goodid_by_sold!=goods_by_sold.begin()){
-            goodid_by_sold--;
-            the_good = goods.find(goodid_by_sold->id);
-            n++;
-            cout << "ORDER::" << n << endl;
-            cout << "GoodID:" << the_good->first << endl;
-            cout << "Sold:" << the_good->second.sold << endl;
-            cout << "****************************************************" << endl;
-            if(n>=print_num)break;
-        }
-    }
     // buyer
     {   
+        the_buyer = the_buyer_tar;
+        n++;
+        cout << "TargetBuyerID:" << the_buyer->first << endl;
+        cout << "OrderWeekend:" << the_buyer->second.buy_num_weekend[0] << endl;
+        cout << "OrderWorkday:" << the_buyer->second.buy_num_weekend[1] << endl;
+        cout << "OrderNight:" << the_buyer->second.buy_num_night[0] << endl;
+        cout << "OrderDay:" << the_buyer->second.buy_num_night[1] << endl;
+        cout << "Type:";
+        if(the_buyer->second.buy_num_night[0] < the_buyer->second.buy_num_night[1])cout << 'D';
+            else cout << 'N';
+        if(the_buyer->second.buy_num_weekend[0] < the_buyer->second.buy_num_weekend[1])cout << 'O';
+            else cout << 'W';
+        cout << endl;
+        cout << "NumberOfOrders:" << the_buyer->second.buy_num << endl;
+        cout << "****************************************************" << endl;
+
         set<Buyer_By_Pay>::iterator buyerid_by_pay;
         buyerid_by_pay = buyers_by_pay.end();
         n=0;
@@ -279,15 +298,23 @@ set<Buyer_By_Pay> buyers_by_pay;
             buyerid_by_pay--;
             the_buyer = buyers.find(buyerid_by_pay->id);
             n++;
-            cout << "ORDER::" << n << endl;
-            cout << "BuyerID:" << the_buyer->first << endl;
-            cout << "Pay:" << the_buyer->second.payment << endl;
+            cout << "SimilarBuyerID:" << the_buyer->first << endl;
+            cout << "OrderWeekend:" << the_buyer->second.buy_num_weekend[0] << endl;
+            cout << "OrderWorkday:" << the_buyer->second.buy_num_weekend[1] << endl;
+            cout << "OrderNight:" << the_buyer->second.buy_num_night[0] << endl;
+            cout << "OrderDay:" << the_buyer->second.buy_num_night[1] << endl;
+            cout << "Type:";
+            if(the_buyer->second.buy_num_night[0] < the_buyer->second.buy_num_night[1])cout << 'D';
+                else cout << 'N';
+            if(the_buyer->second.buy_num_weekend[0] < the_buyer->second.buy_num_weekend[1])cout << 'O';
+                else cout << 'W';
+            cout << endl;
             cout << "NumberOfOrders:" << the_buyer->second.buy_num << endl;
             cout << "****************************************************" << endl;
             if(n>=print_num)break;
         }
     }
-// }
+}
 
 
 
@@ -330,5 +357,21 @@ bool is_happen(const long &createtime,const string &date){
     int mm = (d % 10000)/100;
     int dd = d % 100;
     if((p->tm_year+1900) == yy && p->tm_mon == (mm - 1) && p->tm_mday == dd)return true;
+    return false;
+}
+
+bool is_weekend(const long &createtime){
+    time_t timep = createtime;
+    struct tm *p;
+    p = gmtime(&timep);
+    if(p->tm_wday == 0 || p->tm_wday == 6)return true;
+    return false;
+}
+
+bool is_night(const long &createtime){
+    time_t timep = createtime;
+    struct tm *p;
+    p = gmtime(&timep);
+    if(p->tm_hour < 6 || p->tm_hour > 18)return true;
     return false;
 }

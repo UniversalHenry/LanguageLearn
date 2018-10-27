@@ -15,6 +15,7 @@
         "map": "cpp",
         "utility": "cpp",
         "set": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "stack": "cpp"
     }
 }

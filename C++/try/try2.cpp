@@ -12,6 +12,9 @@
 
 using namespace std;
 
+
+int default3(int c ,const int a = 30);
+
 int main(void){
 // time start
     double dur;
@@ -19,7 +22,7 @@ int main(void){
     start = clock();
 
 // try here
-    for(int i = 0; i < 100; i++) cout << "1 ";
+    cout << default3(10);
     
 // time stop
     end = clock();
@@ -28,4 +31,8 @@ int main(void){
 	cout << "\nProgram finished.";
     cin >> dur;
     return 0;
+}
+
+int default3(int c ,const int a){
+    return c + a;
 }

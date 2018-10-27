@@ -1,3 +1,8 @@
+/******************************
+ * week7 homework by 陆昊成
+ * student ID: 517021910649
+ * content: Redundant Parentheses
+ * ****************************/
 #include <iostream>
 #include <cstdlib> 
 #include <cstdio>

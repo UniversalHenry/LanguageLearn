@@ -16,6 +16,7 @@
         "utility": "cpp",
         "set": "cpp",
         "algorithm": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "ctime": "cpp"
     }
 }

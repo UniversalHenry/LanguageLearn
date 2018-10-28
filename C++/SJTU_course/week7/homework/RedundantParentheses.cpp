@@ -60,7 +60,7 @@ string get_output(const int &front_level){ // get the output of the input
                 cin.get(token);
                 cin.unget();
                 tmp_level = get_level(token);
-                if(now_level < front_level || (now_level == front_level && front_level % 2 == 0) || (now_level / 2) < (tmp_level / 2))
+                if(now_level < front_level || (now_level == front_level && front_level % 2 == 0) || ((now_level + 1) / 2) < ((tmp_level + 1) / 2))
                     return ("(" + output + ")");
                 else return output;
             }

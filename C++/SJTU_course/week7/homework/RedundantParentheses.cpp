@@ -20,10 +20,8 @@ string get_output(const int &front_level);
 
 int main(void){ // main function here
     string output;
-    while(true){
-        output = get_output(0); // 0 represets the front level is the lowest, see the implementation
-        cout << output;
-    }
+    output = get_output(0); // 0 represets the front level is the lowest, see the implementation
+    cout << output;
     return 0;
 }
 

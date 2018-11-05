@@ -17,6 +17,7 @@
         "set": "cpp",
         "algorithm": "cpp",
         "stack": "cpp",
-        "ctime": "cpp"
+        "ctime": "cpp",
+        "xutility": "cpp"
     }
 }

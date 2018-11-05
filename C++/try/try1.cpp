@@ -12,6 +12,9 @@
 
 using namespace std;
 
+
+int default3(int c ,const int a = 30);
+
 int main(void){
 // time start
     double dur;
@@ -19,7 +22,6 @@ int main(void){
     start = clock();
 
 // try here
-    
     char *wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     time_t timep = 1477418957;
     struct tm *p;
@@ -30,13 +32,11 @@ int main(void){
     printf("%d/%d/%d ", 1900 + p->tm_year, 1 + p->tm_mon, p->tm_mday);
     printf("%s %d:%d:%d\n", wday[p->tm_wday], p->tm_hour,
         p->tm_min, p->tm_sec);
-
     
 // time stop
     end = clock();
     dur = (double)(end - start);
-    printf("\nUseTime:%f",(dur / CLOCKS_PER_SEC));
-	cout << "\nProgram finished.";
-    cin >> dur;
+    cout << endl << "UseTime:" << (dur / CLOCKS_PER_SEC) << endl;
+    system("pause");
     return 0;
 }

@@ -22,17 +22,12 @@ int main(void){
     start = clock();
 
 // try here
-    cout << default3(10);
+    
     
 // time stop
     end = clock();
     dur = (double)(end - start);
-    printf("\nUseTime:%f",(dur / CLOCKS_PER_SEC));
-	cout << "\nProgram finished.";
-    cin >> dur;
+    cout << endl << "UseTime:" << (dur / CLOCKS_PER_SEC) << endl;
+    system("pause");
     return 0;
-}
-
-int default3(int c ,const int a){
-    return c + a;
 }

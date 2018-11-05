@@ -18,6 +18,7 @@
         "algorithm": "cpp",
         "stack": "cpp",
         "ctime": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "xtree": "cpp"
     }
 }

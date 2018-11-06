@@ -1,7 +1,8 @@
 /*
  * File: Basic.cpp
  * ---------------
- * Name: [TODO: enter name here]
+ * Name: 陆昊成(Henry Lu)
+ * StudentID: 517021910649
  * Section: [TODO: enter section leader here]
  * This file is the starter project for the BASIC interpreter from
  * Assignment #6.

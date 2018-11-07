@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <algorithm>
 #include <set>
+#include <map>
 
 #define DENSITY 60
 // #define RED     4
@@ -40,6 +41,10 @@ class Point
         X = x;
         Y = y;
     }
+
+    bool operator< (const Point& point) const {
+            return (X < point.X) && (Y < point.Y);
+        }
 
     Point& operator= (const Point& point)
     {
@@ -159,7 +164,7 @@ bool is_valid_action(const Point &p_, const vector<Point> &way, const vector<vec
     return false;
 }
 
-bool solve(vector<vector<int> > &maze, Point start, Point end)
+bool simple_solve(vector<vector<int> > &maze, Point start, Point end)
 {
     vector<Point> way_now;
     vector<Point> ans_way;
@@ -177,6 +182,7 @@ bool solve(vector<vector<int> > &maze, Point start, Point end)
         bool flag = false;
         for(int i = 0; i < 8; i++){
             point_next = take_action(point_now, i);
+            if(abs(point_next.X - start.X) > (abs(end.X - start.X) + 5) && abs(point_next.Y - start.Y) > (abs(end.Y - start.Y) + 5)) return false;
             if(is_valid_action(point_next, way_now, maze) && find(p_exist.begin(),p_exist.end(),point_next) == p_exist.end()){
                 p_exist.push_back(point_next);
                 way_next = way_now;
@@ -199,6 +205,51 @@ bool solve(vector<vector<int> > &maze, Point start, Point end)
     }
     return true;
 }
+
+void find_along_point(const int &x, const int &y, const vector<vector<int> > &maze, const int &interval, Point &p){
+    int count = rand()%10;
+    int c = 0;
+    for(int i = x + interval / 2; i > x - interval / 2; i--){
+        for(int j = y + interval / 2; j > y - interval / 2; j--){
+            Point tmp(i,j);
+            if(maze[j][i] == 1) {p=tmp; if(c==count)return; c++;}
+        }
+    }
+}
+
+bool solve(vector<vector<int> > &maze, Point start, Point end){
+    map<Point,Point > along_points;
+    int interval = 100;
+    for(int x = start.X + interval; x < end.X - interval; x += interval){
+        for(int y = start.Y + interval; y < end.Y - interval; y += interval){
+            Point p_a;
+            Point p(x,y);
+            find_along_point(x, y, maze, interval, p_a);
+            along_points.insert(make_pair(p,p_a));
+        }
+    }
+    return true;
+    vector<Point> way;
+    way.push_back(start);
+    for(int x = start.X; x < end.X - interval; x += interval){
+        Point p(x,x);
+        way.push_back(along_points.find(p)->second);
+    }
+    way.push_back(end);
+    vector<Point>::iterator way_get;
+    Point pnow;
+    way_get = way.begin();
+    pnow = *way_get;
+    bool flag = true;
+    while(true){
+        way_get++;
+        if(!simple_solve(maze,pnow,*way_get)){flag = false; break;}
+        pnow = *way_get;
+    }
+    return flag;
+    
+}
+
 int main()
 {
     int t = 0, tend = 0;
@@ -212,8 +263,8 @@ int main()
             start = clock();
 
         // try here 
-            int width = 1000;
-            int height = 1000;
+            int width = 10000;
+            int height = 10000;
 
             cout<<"Please input the width:"<<width<<endl;
             // cin>>width;
@@ -229,7 +280,7 @@ int main()
             // cin >> end_x >> end_y;
             Point startp(start_x, start_y);
             Point endp(end_x, end_y);
-            int free = 5;
+            int free = height / 30;
             for(int i = 0; i < free; i++){
                 for(int j = 0; j < free; j++){
                     maze[start_y + j][start_x + i] == 1;

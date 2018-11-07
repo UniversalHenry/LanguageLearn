@@ -182,7 +182,7 @@ bool simple_solve(vector<vector<int> > &maze, Point start, Point end)
         bool flag = false;
         for(int i = 0; i < 8; i++){
             point_next = take_action(point_now, i);
-            if(abs(point_next.X - start.X) > (abs(end.X - start.X) + 5) && abs(point_next.Y - start.Y) > (abs(end.Y - start.Y) + 5)) return false;
+            if(abs(point_next.X - start.X) > (abs(end.X - start.X) + 5) && abs(point_next.Y - start.Y) > (abs(end.Y - start.Y) + 25)) return false;
             if(is_valid_action(point_next, way_now, maze) && find(p_exist.begin(),p_exist.end(),point_next) == p_exist.end()){
                 p_exist.push_back(point_next);
                 way_next = way_now;
@@ -247,7 +247,6 @@ bool solve(vector<vector<int> > &maze, Point start, Point end){
         pnow = *way_get;
     }
     return flag;
-    
 }
 
 int main()

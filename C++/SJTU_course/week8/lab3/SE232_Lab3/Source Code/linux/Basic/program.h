@@ -139,7 +139,8 @@ private:
 
 // Fill this in with whatever types and instance variables you need
 
-  map<int,string> program_arg; // save arguements of program
+  map<int,string> program_state; // save statements of program
+  map<int,Statement*> program_parsed_state; // save parsed statements of program
 };
 
 #endif

@@ -225,7 +225,7 @@ public:
    virtual int eval(EvalState & state);
    virtual std::string toString();
    virtual ExpressionType getType();
-
+   
 /*
  * Methods: getOp, getLHS, getRHS
  * Usage: string op = ((CompoundExp *) exp)->getOp();

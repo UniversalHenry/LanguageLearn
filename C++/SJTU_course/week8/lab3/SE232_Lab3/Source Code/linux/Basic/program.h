@@ -139,6 +139,7 @@ private:
 
 // Fill this in with whatever types and instance variables you need
 
+  map<int,string> program_arg; // save arguements of program
 };
 
 #endif

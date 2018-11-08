@@ -23,14 +23,22 @@ Program::~Program() {
 
 void Program::clear() {
    // Replace this stub with your own code
+   program_arg.clear();
 }
 
 void Program::addSourceLine(int lineNumber, string line) {
    // Replace this stub with your own code
+   map<int,string>::iterator the_arg;
+   the_arg = program_arg.find(lineNumber); // find lineNumber in the existing program
+   if(the_arg == program_arg.end()) program_arg.insert(make_pair(lineNumber,line)); // if not exist, put in
+   else the_arg->second = line; // if exist, change line content
 }
 
 void Program::removeSourceLine(int lineNumber) {
    // Replace this stub with your own code
+   map<int,string>::iterator the_arg;
+   the_arg = program_arg.find(lineNumber); // find lineNumber in the existing program
+   program_arg.erase(the_arg);
 }
 
 string Program::getSourceLine(int lineNumber) {

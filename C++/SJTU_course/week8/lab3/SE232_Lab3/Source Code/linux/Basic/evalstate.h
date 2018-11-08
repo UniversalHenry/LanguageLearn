@@ -26,7 +26,6 @@
 
 class EvalState {
 
-public:
 
 /*
  * Constructor: EvalState

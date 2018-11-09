@@ -17,7 +17,6 @@
 #include "program.h"
 #include "../StanfordCPPLib/error.h"
 #include "../StanfordCPPLib/tokenscanner.h"
-
 #include "../StanfordCPPLib/simpio.h"
 #include "../StanfordCPPLib/strlib.h"
 using namespace std;
@@ -59,9 +58,34 @@ void processLine(string line, Program & program, EvalState & state) {
    TokenScanner scanner;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
-   scanner.setInput(line);
-   Expression *exp = parseExp(scanner);
-   int value = exp->eval(state);
-   cout << value << endl;
-   delete exp;
+   scanner.setInput(line + " "); // add " " in case input is empty
+   string firstToken = scanner.nextToken();
+   if (scanner.getTokenType(firstToken) == NUMBER) {
+        // save program
+			if (scanner.hasMoreTokens()){
+				int i = scanner.getPosition();
+                // TODO_ME:: IF CHECK PASS
+				program.addSourceLine(atoi(firstToken.c_str()), line.substr(i));
+                // ELSE CERR
+			}
+			else{
+                // CERR
+            }
+   }
+   else{
+       // excute the line
+       // IF NO ERR DO
+       // ELSE CERR
+   }
 }
+
+// void processExp(string line, EvalState & state) {
+//    TokenScanner scanner;
+//    scanner.ignoreWhitespace();
+//    scanner.scanNumbers();
+//    scanner.setInput(line);
+//    Expression *exp = parseExp(scanner);
+//    int value = exp->eval(state);
+//    cout << value << endl;
+//    delete exp;
+// }

@@ -22,15 +22,10 @@ int main(void){
     start = clock();
 
 // try here
-    map<int,int> x_s;
-    map<int,int>::iterator x;
-    x_s.insert(make_pair(0,0));
-    x = x_s.end();
-    x_s.erase(x);
-    x--;
-    cout << x->second;
-    x_s.erase(x);
-    cout << "\terased";
+    int x = 0;
+    bool t = true;
+    bool f = false;
+    cout << x+f << "\t" << x+t << "\t" << x+t+t+t+t << endl;
     
 // time stop
     end = clock();

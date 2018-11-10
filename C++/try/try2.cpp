@@ -22,10 +22,9 @@ int main(void){
     start = clock();
 
 // try here
-    int x = 0;
-    bool t = true;
-    bool f = false;
-    cout << x+f << "\t" << x+t << "\t" << x+t+t+t+t << endl;
+    int x = 1;
+    x <<= 1;
+    cout << x;
     
 // time stop
     end = clock();

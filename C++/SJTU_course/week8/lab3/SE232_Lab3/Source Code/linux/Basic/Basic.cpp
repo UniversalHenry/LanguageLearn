@@ -15,6 +15,7 @@
 #include "exp.h"
 #include "parser.h"
 #include "program.h"
+#include "statement.h"
 #include "../StanfordCPPLib/error.h"
 #include "../StanfordCPPLib/tokenscanner.h"
 #include "../StanfordCPPLib/simpio.h"
@@ -72,10 +73,14 @@ void processLine(string line, Program & program, EvalState & state) {
                 // CERR
             }
    }
-   else{
+   else if(scanner.hasMoreTokens()) {
        // excute the line
-       // IF NO ERR DO
-       // ELSE CERR
+        Complex_statement statement(line);
+        statement.execute(state);
+   }
+   else {
+        Simple_statement statement(line);
+        statement.execute(state);
    }
 }
 

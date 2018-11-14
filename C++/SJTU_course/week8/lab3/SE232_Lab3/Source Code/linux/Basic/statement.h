@@ -75,4 +75,20 @@ public:
  * specify its own destructor method to free that memory.
  */
 
+class Complex_statement:public Statement{
+  // statements with more than one word
+  public:
+    Complex_statement(const string &s){};
+    Complex_statement(const string &s, Program &program){};
+    void execute(EvalState & state) override;
+};
+
+class Simple_statement:public Statement{
+  // statements with only one word
+  public:
+    Simple_statement(const string &s){};
+    Simple_statement(const string &s, Program &program){};
+    void execute(EvalState & state) override;
+};
+
 #endif

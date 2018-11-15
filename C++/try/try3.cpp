@@ -20,7 +20,7 @@ int main(void){
     start = clock();
 
 // try here
-    ofstream fout("Gprogram.txt");
+    ofstream fout("Gprogram");
     const double pi = 3.1415926535898;
     double theta = 0;
     double r = 0;

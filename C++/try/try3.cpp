@@ -20,23 +20,23 @@ int main(void){
     start = clock();
 
 // try here
-    ofstream fout("Gprogram");
+    ofstream fout("Gprogram.txt");
     const double pi = 3.1415926535898;
     double theta = 0;
     double r = 0;
     double h = 0;
-    int n = 30;
+    int n = 100;
     double dtheta = pi/360;
     double dr = (8 / (2*pi)) * dtheta;
     double dh = -2.5 / 36 * dr; 
+    fout.setf(ios::fixed);
     while(true){
-        double x = 40 + r * cos(theta);
-        double y = 50 + r * sin(theta);
+        double x = 50 + r * cos(theta);
+        double y = 40 + r * sin(theta);
         fout << "N" << n ;
-        fout << "X" << setprecision(5) << x;
-        fout << "Y" << setprecision(5) << y;
-        fout << "Z" << setprecision(3) << h;
-        fout << "F100" << endl;
+        fout << "X" << setprecision(3) << x;
+        fout << "Y" << setprecision(3) << y;
+        fout << "Z" << setprecision(3) << h << endl;
         r += dr;
         h += dh;
         theta += dtheta;
@@ -49,14 +49,14 @@ int main(void){
     dtheta = pi/360;
     dr = (8 / (2*pi)) * dtheta;
     dh = 2.5 / 36 * dr; 
+    n=4000;
     while(true){
-        double x = 40 + r * cos(theta);
-        double y = 50 + r * sin(theta);
+        double x = 50 + r * cos(theta);
+        double y = 40 + r * sin(theta);
         fout << "N" << n ;
-        fout << "X" << setprecision(5) << x;
-        fout << "Y" << setprecision(5) << y;
-        fout << "Z" << setprecision(3) << h;
-        fout << "F100" << endl;
+        fout << "X" << setprecision(3) << x;
+        fout << "Y" << setprecision(3) << y;
+        fout << "Z" << setprecision(3) << h << endl;
         r += dr;
         h += dh;
         theta += dtheta;

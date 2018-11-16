@@ -68,7 +68,7 @@ IdentifierExp::IdentifierExp(string name) {
 }
 
 int IdentifierExp::eval(EvalState & state) {
-   if (!state.isDefined(name)) error("SYNTAX ERROR");
+   if (!state.isDefined(name)) error("VARIABLE NOT DEFINED");
    return state.getValue(name);
 }
 
@@ -114,7 +114,7 @@ CompoundExp::~CompoundExp() {
 int CompoundExp::eval(EvalState & state) {
    if (op == "=") {
       if (lhs->getType() != IDENTIFIER) {
-         error("VARIABLE NOT DEFINED");
+         error("SYNTAX ERROR");
       }
       int val = rhs->eval(state);
       state.setValue(((IdentifierExp *) lhs)->getName(), val);
@@ -125,7 +125,10 @@ int CompoundExp::eval(EvalState & state) {
    if (op == "+") return left + right;
    if (op == "-") return left - right;
    if (op == "*") return left * right;
-   if (op == "/") return left / right;
+   if (op == "/") {
+       if(right == 0) error("DIVIDE BY ZERO");
+       return left / right;
+   }
    error("SYNTAX ERROR");
    return 0;
 }

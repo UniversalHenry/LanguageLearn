@@ -8,8 +8,13 @@
 #ifndef _program_h
 #define _program_h
 
+#include <memory>
 #include <string>
+#include "exp.h"
+#include "parser.h"
+#include "evalstate.h"
 #include "statement.h"
+
 using namespace std;
 
 /*
@@ -25,7 +30,9 @@ using namespace std;
  *    pointer to a Statement.
  */
 
-class Program {
+class Statement;
+
+class Program{
 
 public:
 

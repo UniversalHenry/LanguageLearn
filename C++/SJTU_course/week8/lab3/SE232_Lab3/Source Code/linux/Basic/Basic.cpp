@@ -28,15 +28,14 @@ void processLine(string line, Program & program, EvalState & state);
 
 /* Main program */
 
-int main() {
+int main(){
    EvalState state;
    Program program;
-   cout << "Stub implementation of BASIC" << endl;
-   while (true) {
-      try {
+   while(true){
+      try{
          processLine(getLine(), program, state);
-      } catch (ErrorException & ex) {
-         cerr << "Error: " << ex.getMessage() << endl;
+      } catch(ErrorException & ex){
+         cerr << ex.getMessage() << endl;
       }
    }
    return 0;
@@ -51,35 +50,35 @@ int main() {
  * does in Chapter 19: read a line, parse it as an expression,
  * and then print the result.  In your implementation, you will
  * need to replace this method with one that can respond correctly
- * when the user enters a program line (which begins with a number)
+ * when the user enters a program line(which begins with a number)
  * or one of the BASIC commands, such as LIST or RUN.
  */
 
-void processLine(string line, Program & program, EvalState & state) {
+void processLine(string line, Program & program, EvalState & state){
    TokenScanner scanner;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
-   scanner.setInput(line + " "); // add " " in case input is empty
+   scanner.setInput(line);
    string firstToken = scanner.nextToken();
-   if (scanner.getTokenType(firstToken) == NUMBER) {
+   if(scanner.getTokenType(firstToken) == NUMBER){
         // save program
-			if (scanner.hasMoreTokens()){
+			if(scanner.hasMoreTokens()){
 				int i = scanner.getPosition();
-                // TODO_ME:: IF CHECK PASS
-				program.addSourceLine(atoi(firstToken.c_str()), line.substr(i));
-                // ELSE CERR
+                string tmpLine = line.substr(i);
+                Check_statement check(tmpLine);
+                check.execute(state);
+                Complex_statement* stmt = new Complex_statement(tmpLine,&program);
+                program.setParsedStatement(atoi(firstToken.c_str()),stmt);
+                program.addSourceLine(atoi(firstToken.c_str()), tmpLine);
 			}
-			else{
-                // CERR
-            }
    }
-   else if(scanner.hasMoreTokens()) {
+   else if(scanner.hasMoreTokens()){
        // excute the line
-        Complex_statement statement(line);
+        Complex_statement statement(line, &program);
         statement.execute(state);
    }
-   else {
-        Simple_statement statement(line);
+   else{
+        Simple_statement statement(line, &program);
         statement.execute(state);
    }
 }

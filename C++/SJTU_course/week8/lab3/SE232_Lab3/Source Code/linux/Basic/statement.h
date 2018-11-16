@@ -12,10 +12,9 @@
 #ifndef _statement_h
 #define _statement_h
 
-#include "evalstate.h"
-#include "program.h"
-#include "exp.h"
 #include <memory>
+#include <string>
+#include "program.h"
 
 /*
  * Class: Statement
@@ -27,7 +26,9 @@
  * BASIC interpreter.
  */
 
-class Statement {
+class Program;
+
+class Statement{
 
 public:
 
@@ -82,29 +83,37 @@ class Complex_statement:public Statement{
   public:
     Complex_statement(const Complex_statement& statement):
       line(statement.line),program_ptr(statement.program_ptr){};
-    Complex_statement(const string &s):
-      line(s),program_ptr(NULL){};
-    Complex_statement(const string &s, shared_ptr<Program> p_ptr):
+    Complex_statement(const string &s):line(s),program_ptr(nullptr){};
+    Complex_statement(const string &s, Program* p_ptr):
       line(s),program_ptr(p_ptr){};
     void execute(EvalState & state) override;
   private:
     string line;
-    shared_ptr<Program> program_ptr;
+    Program* program_ptr;
 };
 
 class Simple_statement:public Statement{
   // statements with only one word
   public:
-    Simple_statement(const Simple_statement& statement): 
+    Simple_statement(const Simple_statement& statement):
       line(statement.line),program_ptr(statement.program_ptr){};
-    Simple_statement(const string &s):
-      line(s),program_ptr(NULL){};
-    Simple_statement(const string &s, shared_ptr<Program> p_ptr):
+    Simple_statement(const string &s):line(s){};
+    Simple_statement(const string &s, Program* p_ptr):
       line(s),program_ptr(p_ptr){};
     void execute(EvalState & state) override;
   private:
     string line;
-    shared_ptr<Program> program_ptr;
+    Program* program_ptr;
+};
+
+class Check_statement:public Statement{
+  // check the program syntax
+  public:
+    Check_statement(const string &s):line(s){};
+    Check_statement(const Check_statement& statement):line(statement.line){};
+    void execute(EvalState & state) override; 
+  private:
+    string line;
 };
 
 #endif

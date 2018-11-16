@@ -7,10 +7,13 @@
  * BASIC statements.
  */
 
+#include <memory>
 #include <string>
+#include <vector>
 #include "exp.h"
 #include "parser.h"
 #include "program.h"
+#include "evalstate.h"
 #include "statement.h"
 #include "../StanfordCPPLib/error.h"
 #include "../StanfordCPPLib/tokenscanner.h"
@@ -20,14 +23,6 @@
 using namespace std;
 
 /* Implementation of the Statement class */
-
-Statement::Statement(){
-    /* Empty */
-}
-
-Statement::~Statement(){
-    /* Empty */
-}
 
 void Complex_statement::execute(EvalState & state){
 	TokenScanner scanner;
@@ -39,6 +34,13 @@ void Complex_statement::execute(EvalState & state){
 		return;
 	}
 	if(firstToken == "LET"){
+		firstToken = scanner.nextToken();
+		vector<string> order_name = {"REM","LET","PRINT","INPUT",
+		"IF","THEN","GOTO","RUN","LIST","CLEAR","QUIT","HELP"};
+		for(auto ptr = order_name.begin(); ptr != order_name.end(); ptr++)
+			if(*ptr == firstToken) error("SYNTAX ERROR");
+		scanner.setInput(line);
+		scanner.nextToken();
 		Expression *exp = parseExp(scanner);
 		int value = exp->eval(state);
 		return;
@@ -115,7 +117,7 @@ void Complex_statement::execute(EvalState & state){
 
 void Simple_statement::execute(EvalState & state){
 	if(line == "RUN"){
-		if(program_ptr == NULL) return;
+		if(program_ptr == nullptr) return;
 		int LineNum = program_ptr->getFirstLineNumber();
 		while(LineNum >= 0){
 			auto tmpstatement = program_ptr->getParsedStatement(LineNum);
@@ -125,11 +127,11 @@ void Simple_statement::execute(EvalState & state){
 		return;
 	}
 	if(line == "LIST"){
-		if(program_ptr == NULL) return;
+		if(program_ptr == nullptr) return;
 		int LineNum = program_ptr->getFirstLineNumber();
 		while(LineNum >= 0){
 			auto tmpLine = program_ptr->getSourceLine(LineNum);
-			cout << tmpLine << endl;
+			cout << LineNum << " " << tmpLine << endl;
 			if(program_ptr->getSourceLine(LineNum) == "END") break;
 			LineNum = program_ptr->getNextLineNumber(LineNum);
 		}
@@ -147,6 +149,55 @@ void Simple_statement::execute(EvalState & state){
 		cout << "Stub implementation of BASIC" << endl;
 		return;
 	}
+	if(line == ""){
+		return;
+	}
 	error("SYNTAX ERROR");
 	return;
+}
+
+void Check_statement::execute(EvalState & state){
+	TokenScanner scanner;
+	scanner.ignoreWhitespace();
+	scanner.scanNumbers();
+	scanner.setInput(line);
+	string firstToken = scanner.nextToken();
+	if(firstToken == "REM"){
+		return;
+	}
+	if(firstToken == "LET"){
+		Expression *exp = parseExp(scanner);
+		return;
+	}
+	if(firstToken == "PRINT"){
+		Expression *exp = parseExp(scanner);
+		return;
+	}
+	if(firstToken == "INPUT"){
+		return;
+	}
+	if(firstToken == "IF"){
+		string tmpExpression;
+		string tmp;
+		while((tmp = scanner.nextToken()) != "=" && tmp != ">" && tmp != "<" && scanner.hasMoreTokens()){
+			tmpExpression += tmp;
+		}
+		TokenScanner tmpScanner(tmpExpression);
+		Expression *exp = parseExp(tmpScanner);
+		tmpExpression = "";
+		while((tmp = scanner.nextToken()) != "THEN"){
+			tmpExpression += tmp;
+		}
+		tmpScanner.setInput(tmpExpression);
+		exp = parseExp(tmpScanner);
+		firstToken = "GOTO";
+	}
+	if(firstToken == "GOTO"){
+		string tmpLine = scanner.nextToken();
+		if(scanner.hasMoreTokens() || scanner.getTokenType(tmpLine) != NUMBER) error("SYNTAX ERROR");
+		for(auto ch = tmpLine.begin(); ch != tmpLine.end(); ch++)
+			if(!isdigit(*ch)) error("SYNTAX ERROR");
+		return;
+	}
+	error("SYNTAX ERROR");
 }

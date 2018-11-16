@@ -36,7 +36,7 @@ void Complex_statement::execute(EvalState & state){
 	if(firstToken == "LET"){
 		firstToken = scanner.nextToken();
 		vector<string> order_name = {"REM","LET","PRINT","INPUT",
-		"IF","THEN","GOTO","RUN","LIST","CLEAR","QUIT","HELP"};
+		"IF","THEN","GOTO","RUN","LIST","CLEAR","QUIT","HELP","END"};
 		for(auto ptr = order_name.begin(); ptr != order_name.end(); ptr++)
 			if(*ptr == firstToken) error("SYNTAX ERROR");
 		scanner.setInput(line);
@@ -60,12 +60,14 @@ void Complex_statement::execute(EvalState & state){
 				getline(cin, tmpLine);
 				TokenScanner tmpScanner(tmpLine);
 				tmpLine = tmpScanner.nextToken();
+				int negative = 0;
 				if(tmpLine == "-"){
+					negative = 1;
 					tmpLine = "-" + tmpScanner.nextToken();
 				}
-				if(tmpScanner.hasMoreTokens() || tmpScanner.getTokenType(tmpLine) != NUMBER) error("SYNTAX ERROR");
-				for(auto ch = tmpLine.begin(); ch != tmpLine.end(); ch++)
-					if(!isdigit(*ch)) error("SYNTAX ERROR");
+				if(tmpScanner.hasMoreTokens()) error("INVALID NUMBER");
+				for(auto ch = tmpLine.begin() + negative; ch != tmpLine.end(); ch++)
+					if(!isdigit(*ch)) error("INVALID NUMBER");
 				break;
 			}
 			catch(ErrorException& e){
@@ -108,31 +110,20 @@ void Complex_statement::execute(EvalState & state){
 		if(scanner.hasMoreTokens() || scanner.getTokenType(tmpLine) != NUMBER) error("SYNTAX ERROR");
 		for(auto ch = tmpLine.begin(); ch != tmpLine.end(); ch++)
 			if(!isdigit(*ch)) error("SYNTAX ERROR");
-		auto tmpstatement = program_ptr->getParsedStatement(atoi(tmpLine.c_str()));
-		tmpstatement->execute(state);
+		next_program_line = atoi(tmpLine.c_str());
+		if(program_ptr->getSourceLine(next_program_line) == "") error("LINE NUMBER ERROR");
 		return;
 	}
 	error("SYNTAX ERROR");
 }
 
 void Simple_statement::execute(EvalState & state){
-	if(line == "RUN"){
-		if(program_ptr == nullptr) return;
-		int LineNum = program_ptr->getFirstLineNumber();
-		while(LineNum >= 0){
-			auto tmpstatement = program_ptr->getParsedStatement(LineNum);
-			if(program_ptr->getSourceLine(LineNum) == "END") break;
-			LineNum = program_ptr->getNextLineNumber(LineNum);
-		}
-		return;
-	}
 	if(line == "LIST"){
 		if(program_ptr == nullptr) return;
 		int LineNum = program_ptr->getFirstLineNumber();
 		while(LineNum >= 0){
 			auto tmpLine = program_ptr->getSourceLine(LineNum);
 			cout << LineNum << " " << tmpLine << endl;
-			if(program_ptr->getSourceLine(LineNum) == "END") break;
 			LineNum = program_ptr->getNextLineNumber(LineNum);
 		}
 		return;
@@ -174,6 +165,8 @@ void Check_statement::execute(EvalState & state){
 		return;
 	}
 	if(firstToken == "INPUT"){
+		string firstToken = scanner.nextToken();
+		if(scanner.hasMoreTokens()) error("SYNTAX ERROR");
 		return;
 	}
 	if(firstToken == "IF"){
@@ -199,5 +192,24 @@ void Check_statement::execute(EvalState & state){
 			if(!isdigit(*ch)) error("SYNTAX ERROR");
 		return;
 	}
+	if(firstToken == "END"){
+		return;
+	}
 	error("SYNTAX ERROR");
+}
+
+void Run_statement::execute(EvalState & state){
+	if(program_ptr == nullptr) return;
+	int LineNum = program_ptr->getFirstLineNumber();
+	while(LineNum >= 0){
+		auto tmpstmt = program_ptr->getParsedStatement(LineNum);
+		if(program_ptr->getSourceLine(LineNum) == "END") break;
+		tmpstmt->execute(state);
+		LineNum = program_ptr->getNextLineNumber(LineNum);
+		if(tmpstmt->next_program_line >= 0){
+			LineNum = tmpstmt->next_program_line;
+			tmpstmt->next_program_line = -1;
+		}
+	}
+	return;
 }

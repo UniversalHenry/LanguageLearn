@@ -35,7 +35,7 @@ int main(){
       try{
          processLine(getLine(), program, state);
       } catch(ErrorException & ex){
-         cerr << ex.getMessage() << endl;
+         cout << ex.getMessage() << endl;
       }
    }
    return 0;
@@ -55,30 +55,51 @@ int main(){
  */
 
 void processLine(string line, Program & program, EvalState & state){
-   TokenScanner scanner;
-   scanner.ignoreWhitespace();
-   scanner.scanNumbers();
-   scanner.setInput(line);
-   string firstToken = scanner.nextToken();
-   if(scanner.getTokenType(firstToken) == NUMBER){
+    static bool last_run = false;
+    static EvalState last_run_state = state;
+    TokenScanner scanner;
+    scanner.ignoreWhitespace();
+    scanner.scanNumbers();
+    scanner.setInput(line + " "); // add " " for the single input, like 15 END
+    string firstToken = scanner.nextToken();
+    if(scanner.getTokenType(firstToken) == NUMBER){
         // save program
-			if(scanner.hasMoreTokens()){
-				int i = scanner.getPosition();
-                string tmpLine = line.substr(i);
-                Check_statement check(tmpLine);
-                check.execute(state);
-                Complex_statement* stmt = new Complex_statement(tmpLine,&program);
-                program.setParsedStatement(atoi(firstToken.c_str()),stmt);
-                program.addSourceLine(atoi(firstToken.c_str()), tmpLine);
-			}
-   }
-   else if(scanner.hasMoreTokens()){
-       // excute the line
+        last_run = false;
+        int order = atoi(firstToken.c_str());
+        if(scanner.hasMoreTokens()){
+            int i = scanner.getPosition();
+            string tmpLine = line.substr(i);
+            Check_statement check(tmpLine);
+            check.execute(state);
+            Complex_statement* stmt = new Complex_statement(tmpLine, &program);
+            program.setParsedStatement(order, stmt);
+            program.addSourceLine(order, tmpLine);
+        }
+        else{
+            program.removeSourceLine(order);
+        }
+    }
+    else if(scanner.hasMoreTokens()){
+        // excute the line
+        last_run = false;
         Complex_statement statement(line, &program);
         statement.execute(state);
-   }
-   else{
+    }
+    else if(firstToken == "RUN"){
+        Run_statement statement(line, &program);
+        if(last_run){
+            state = last_run_state;
+            statement.execute(state);
+        }
+        else{
+            last_run_state = state;
+            statement.execute(state);
+        }
+        last_run = true;
+    }
+    else{
+        last_run = false;
         Simple_statement statement(line, &program);
         statement.execute(state);
-   }
+    }
 }

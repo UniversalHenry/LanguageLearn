@@ -39,7 +39,10 @@ public:
  * its own constructor.
  */
 
-   Statement(){};
+   // To indicate the next line when GOTO, if normal order show -1
+   int next_program_line;
+
+   Statement():next_program_line(-1){};
 
 /*
  * Destructor: ~Statement
@@ -83,7 +86,6 @@ class Complex_statement:public Statement{
   public:
     Complex_statement(const Complex_statement& statement):
       line(statement.line),program_ptr(statement.program_ptr){};
-    Complex_statement(const string &s):line(s),program_ptr(nullptr){};
     Complex_statement(const string &s, Program* p_ptr):
       line(s),program_ptr(p_ptr){};
     void execute(EvalState & state) override;
@@ -114,6 +116,17 @@ class Check_statement:public Statement{
     void execute(EvalState & state) override; 
   private:
     string line;
+};
+
+class Run_statement:public Statement{
+  // run the program
+  public:
+    Run_statement(const Run_statement& statement):program_ptr(statement.program_ptr){};
+    Run_statement(const string &s){};
+    Run_statement(const string &s, Program* p_ptr):program_ptr(p_ptr){};
+    void execute(EvalState & state) override;
+  private:
+    Program* program_ptr;
 };
 
 #endif

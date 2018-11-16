@@ -30,9 +30,9 @@ void Program::clear() {
    auto tmpptr = program_parsed_state.begin();
    while(tmpptr != program_parsed_state.end()){
         delete program_parsed_state.begin()->second;
+        program_parsed_state.erase(tmpptr);
         tmpptr++;
    }
-   program_parsed_state.clear();
    program_state.clear();
 }
 
@@ -46,10 +46,15 @@ void Program::addSourceLine(int lineNumber, string line) {
 
 void Program::removeSourceLine(int lineNumber) {
    // Replace this stub with your own code
-   map<int,string>::iterator the_state;
-   the_state = program_state.find(lineNumber); // find lineNumber in the existing program
-   if(the_state == program_state.end()) return; // if not exist, ignore
-   else program_state.erase(the_state); // if exist, delete
+    map<int,string>::iterator the_state;
+    the_state = program_state.find(lineNumber); // find lineNumber in the existing program
+    if(the_state != program_state.end()) program_state.erase(the_state); // if not exist, ignore; if exist, delete
+    map<int,Statement*>::iterator the_parsed_state;
+    the_parsed_state = program_parsed_state.find(lineNumber);
+    if(the_parsed_state != program_parsed_state.end()){
+        delete the_parsed_state->second;
+        program_parsed_state.erase(the_parsed_state);
+    }
 }
 
 string Program::getSourceLine(int lineNumber) {

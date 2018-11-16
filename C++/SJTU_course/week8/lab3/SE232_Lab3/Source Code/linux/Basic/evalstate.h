@@ -71,11 +71,16 @@ public:
  */
 
    bool isDefined(std::string var);
+/*
+ * Method: clear
+ * Usage: cleaer
+ * --------------------------------------
+ * Clear all variables
+ */
+   void clear();
 
 private:
-
    Map<std::string,int> symbolTable;
-
 };
 
 #endif

@@ -26,25 +26,24 @@ void Complex_statement::execute(EvalState & state){
 }
 
 void Simple_statement::execute(EvalState & state){
-	if (line == "HELP") {
-		cout << "http://tcloud.sjtu.edu.cn/course/se106/2014/assignments/lab3/index.php" << endl;
-		return;
-	}
-	if (line == "QUIT") {
+	if (line == "RUN") {
+		while()
 		return;
 	}
 	if (line == "LIST") {
-		outputProgram();
+		program_ptr.reset();
 		return;
 	}
 	if (line == "CLEAR") {
-		program.clear();
-		variables.clear();
-		program[0] = "";
+		program_ptr->clear();
+		state.clear();
 		return;
 	}
-	if (line == "RUN") {
-		runProgram();
+	if (line == "QUIT") {
+		exit(0);
+	}
+	if (line == "HELP") {
+		cout << "Stub implementation of BASIC" << endl;
 		return;
 	}
 	error("SYNTAX ERROR");

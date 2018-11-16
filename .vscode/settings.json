@@ -19,6 +19,7 @@
         "stack": "cpp",
         "ctime": "cpp",
         "xutility": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "memory": "cpp"
     }
 }

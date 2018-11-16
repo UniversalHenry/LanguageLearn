@@ -83,14 +83,3 @@ void processLine(string line, Program & program, EvalState & state) {
         statement.execute(state);
    }
 }
-
-// void processExp(string line, EvalState & state) {
-//    TokenScanner scanner;
-//    scanner.ignoreWhitespace();
-//    scanner.scanNumbers();
-//    scanner.setInput(line);
-//    Expression *exp = parseExp(scanner);
-//    int value = exp->eval(state);
-//    cout << value << endl;
-//    delete exp;
-// }

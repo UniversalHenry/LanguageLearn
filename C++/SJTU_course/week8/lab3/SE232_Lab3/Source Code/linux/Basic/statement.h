@@ -38,7 +38,7 @@ public:
  * its own constructor.
  */
 
-   Statement();
+   Statement(){};
 
 /*
  * Destructor: ~Statement
@@ -49,11 +49,11 @@ public:
  * destructor is called when deleting a statement.
  */
 
-   virtual ~Statement();
+   virtual ~Statement(){};
 
 /*
  * Method: execute
- * Usage: stmt->execute(state);
+ * Usage: stmt->execute(state){};
  * ----------------------------
  * This method executes a BASIC statement.  Each of the subclasses
  * defines its own execute method that implements the necessary
@@ -81,11 +81,11 @@ class Complex_statement:public Statement{
   // statements with more than one word
   public:
     Complex_statement(const Complex_statement& statement):
-      line(statement.line),program_ptr(statement.program_ptr);
+      line(statement.line),program_ptr(statement.program_ptr){};
     Complex_statement(const string &s):
-      line(s),program_ptr(NULL);
+      line(s),program_ptr(NULL){};
     Complex_statement(const string &s, shared_ptr<Program> p_ptr):
-      line(s),program_ptr(p_ptr);
+      line(s),program_ptr(p_ptr){};
     void execute(EvalState & state) override;
   private:
     string line;
@@ -96,11 +96,11 @@ class Simple_statement:public Statement{
   // statements with only one word
   public:
     Simple_statement(const Simple_statement& statement): 
-      line(statement.line),program_ptr(statement.program_ptr);
+      line(statement.line),program_ptr(statement.program_ptr){};
     Simple_statement(const string &s):
-      line(s),program_ptr(NULL);
+      line(s),program_ptr(NULL){};
     Simple_statement(const string &s, shared_ptr<Program> p_ptr):
-      line(s),program_ptr(p_ptr);
+      line(s),program_ptr(p_ptr){};
     void execute(EvalState & state) override;
   private:
     string line;

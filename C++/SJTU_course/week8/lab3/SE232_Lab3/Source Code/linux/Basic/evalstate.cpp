@@ -10,6 +10,7 @@
 #include "evalstate.h"
 
 #include "../StanfordCPPLib/map.h"
+
 using namespace std;
 
 /* Implementation of the EvalState class */
@@ -34,6 +35,6 @@ bool EvalState::isDefined(string var) {
    return symbolTable.containsKey(var);
 }
 
-void clear(){
+void EvalState::clear(){
     symbolTable.clear();
 }

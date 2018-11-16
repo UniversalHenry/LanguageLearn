@@ -56,7 +56,7 @@ void Program::setParsedStatement(int lineNumber, Statement *stmt) {
     the_parsed_state = program_parsed_state.find(lineNumber);
     map<int,string>::iterator the_state;
     the_state = program_state.find(lineNumber);
-    if(the_state == program_state.end()) error("No such statement!");
+    if(the_state == program_state.end()) error("LINE NUMBER ERROR");
     else if(the_parsed_state == program_parsed_state.end()) program_parsed_state.insert(make_pair(lineNumber,stmt));
     else the_parsed_state->second = stmt;
 }

@@ -76,6 +76,7 @@ void processLine(string line, Program & program, EvalState & state){
             program.addSourceLine(order, tmpLine);
         }
         else{
+        // remove the source line
             program.removeSourceLine(order);
         }
     }
@@ -86,6 +87,7 @@ void processLine(string line, Program & program, EvalState & state){
         statement.execute(state);
     }
     else if(firstToken == "RUN"){
+        // run the program in the former environment
         Run_statement statement(line, &program);
         if(last_run){
             state = last_run_state;

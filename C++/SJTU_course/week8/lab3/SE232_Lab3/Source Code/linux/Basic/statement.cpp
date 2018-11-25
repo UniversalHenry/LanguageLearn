@@ -35,10 +35,12 @@ void Complex_statement::execute(EvalState & state){
 	}
 	if(firstToken == "LET"){
 		firstToken = scanner.nextToken();
+		// check for the name
 		vector<string> order_name = {"REM","LET","PRINT","INPUT",
 		"IF","THEN","GOTO","RUN","LIST","CLEAR","QUIT","HELP","END"};
 		for(auto ptr = order_name.begin(); ptr != order_name.end(); ptr++)
 			if(*ptr == firstToken) error("SYNTAX ERROR");
+		// generate the variable
 		scanner.setInput(line);
 		scanner.nextToken();
 		Expression *exp = parseExp(scanner);
@@ -61,19 +63,23 @@ void Complex_statement::execute(EvalState & state){
 				TokenScanner tmpScanner(tmpLine);
 				tmpLine = tmpScanner.nextToken();
 				int negative = 0;
+				// check if negative
 				if(tmpLine == "-"){
 					negative = 1;
 					tmpLine = "-" + tmpScanner.nextToken();
 				}
+				// check if valid input
 				if(tmpScanner.hasMoreTokens()) error("INVALID NUMBER");
 				for(auto ch = tmpLine.begin() + negative; ch != tmpLine.end(); ch++)
 					if(!isdigit(*ch)) error("INVALID NUMBER");
 				break;
 			}
 			catch(ErrorException& e){
+				// if input invalid, loop
 				cout << e.getMessage() << endl;
 			}
 		}
+		// save the variable
 		int val;
 		stringstream ss;
 		ss << tmpLine;
@@ -82,28 +88,28 @@ void Complex_statement::execute(EvalState & state){
 		return;
 	}
 	if(firstToken == "IF"){
-		string tmpExpression;
+		string tmpExp;
 		string tmp;
 		while((tmp = scanner.nextToken()) != "=" && tmp != ">" && tmp != "<" && scanner.hasMoreTokens()){
-			tmpExpression += tmp;
+			tmpExp += tmp;
 		}
-		TokenScanner tmpScanner(tmpExpression);
+		TokenScanner tmpScanner(tmpExp);
 		Expression *exp = parseExp(tmpScanner);
 		int l_val = exp->eval(state);
-		char op = tmp[0];
-		tmpExpression = "";
+		tmpExp = "";
 		while((tmp = scanner.nextToken()) != "THEN"){
-			tmpExpression += tmp;
+			tmpExp += tmp;
 		}
-		tmpScanner.setInput(tmpExpression);
+		tmpScanner.setInput(tmpExp);
 		exp = parseExp(tmpScanner);
 		int r_val = exp->eval(state);
+		char op = tmp[0];
 		switch(op){
 			case '>':if(!(l_val > r_val)) return; break;
 			case '<':if(!(l_val < r_val)) return; break;
 			case '=':if(!(l_val == r_val)) return; break;
 		}
-		firstToken = "GOTO";
+		firstToken = "GOTO"; // if not break, equals to GOTO
 	}
 	if(firstToken == "GOTO"){
 		string tmpLine = scanner.nextToken();
@@ -148,6 +154,7 @@ void Simple_statement::execute(EvalState & state){
 }
 
 void Check_statement::execute(EvalState & state){
+	// check the syntax before saving program
 	TokenScanner scanner;
 	scanner.ignoreWhitespace();
 	scanner.scanNumbers();
@@ -170,18 +177,18 @@ void Check_statement::execute(EvalState & state){
 		return;
 	}
 	if(firstToken == "IF"){
-		string tmpExpression;
+		string tmpExp;
 		string tmp;
 		while((tmp = scanner.nextToken()) != "=" && tmp != ">" && tmp != "<" && scanner.hasMoreTokens()){
-			tmpExpression += tmp;
+			tmpExp += tmp;
 		}
-		TokenScanner tmpScanner(tmpExpression);
+		TokenScanner tmpScanner(tmpExp);
 		Expression *exp = parseExp(tmpScanner);
-		tmpExpression = "";
+		tmpExp = "";
 		while((tmp = scanner.nextToken()) != "THEN"){
-			tmpExpression += tmp;
+			tmpExp += tmp;
 		}
-		tmpScanner.setInput(tmpExpression);
+		tmpScanner.setInput(tmpExp);
 		exp = parseExp(tmpScanner);
 		firstToken = "GOTO";
 	}
@@ -199,6 +206,7 @@ void Check_statement::execute(EvalState & state){
 }
 
 void Run_statement::execute(EvalState & state){
+	// the "RUN" statement
 	if(program_ptr == nullptr) return;
 	int LineNum = program_ptr->getFirstLineNumber();
 	while(LineNum >= 0){

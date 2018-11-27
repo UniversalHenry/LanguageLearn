@@ -20,6 +20,7 @@
         "ctime": "cpp",
         "xutility": "cpp",
         "xtree": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "list": "cpp"
     }
 }

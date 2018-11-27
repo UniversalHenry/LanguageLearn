@@ -34,7 +34,7 @@ int main(void){
     double dur;
     clock_t start,end;
     start = clock();
-    double const dx = pow(10,-n/2);
+    double const dx = pow(10,-n);
     double s = 0;
     vector<double> x_m_r;
     vector<double> x_p_r;

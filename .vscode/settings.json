@@ -23,6 +23,7 @@
         "memory": "cpp",
         "list": "cpp",
         "xhash": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "xmemory0": "cpp"
     }
 }

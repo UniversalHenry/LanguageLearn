@@ -163,7 +163,7 @@ void Heap<Compare>::insert(int element)
     int level = 0;
     int p = 0;
     if(elements.empty()){
-        vector element_ = {element};
+        vector<int> element_ = {element};
         elements[0] = element_;
     }
     else{
@@ -171,12 +171,12 @@ void Heap<Compare>::insert(int element)
         level = it->first;
         p = it->second.size();
         if(p == (1 << level)){
-            vector element_ = {element};
+            vector<int> element_ = {element};
             elements[++level] = element_;
             p = 0;
         }
         else{
-            it->second.push_back();
+            it->second.push_back(element);
         }
     }
     for(auto it = --elements.end(); it != elements.begin(); it--){
@@ -211,9 +211,8 @@ bool Heap<Compare>::erase(int element)
     int val = *(--(--elements.end())->second.end());
     (--elements.end())->second.erase((--(--elements.end())->second.end()));
     if(((--elements.end())->second).size() == 0) elements.erase(--elements.end());
-    int val = *(--(--elements.end())->second.end());
-    int l = elements_index[element]->second.first;
-    int p = elements_index[element]->second.second;
+    int l = elements_index[element].first;
+    int p = elements_index[element].second;
     elements_index.erase(element);
     elements_index[val] = make_pair(l,p);
     auto it = elements.find(l);
@@ -261,7 +260,7 @@ template<class Compare>
 int Heap<Compare>::pop()
 {
     // you code here
-    if(elements.empty()) return NULL;
+    if(elements.empty()) return 0;
     int p = --((--elements.end())->second.size());
     elements_index.erase(elements.begin()->second[0]);
     elements.begin()->second[0] = (--elements.end())->second[p];
@@ -289,7 +288,7 @@ template<class Compare>
 int Heap<Compare>::top()
 {
     // you code here
-    if(elements.empty()) return NULL;
+    if(elements.empty()) return 0;
     return elements.begin()->second[0];
 }
 

@@ -54,19 +54,22 @@ Bin add_bin(const Bin &b1, const Bin &b2){
 	if(l == 0)	{
 		b.str = b1.str + b2.str;
 	}else{
-		char c_r = (1 << (8 - l)) - 1;
-		char c_l = 255 - c_r;
-		b.str = b1.str;
-		b.str = b.str.substr(0,b1.num / 8);
-		char c = (b1.str[b1.num / 8 + 1] & c_r) + (b2.str[0] & c_l);
+		int r = 8 - l;
+		int k = r;
+		l = 1 << l;
+		r = 1 << r;
+		b.str = b1.str.substr(0,b1.num / 8);
+		char c = (int(b1.str[b1.num / 8]) + 256) % 256 / r * r +
+			(int(b2.str[0]) + 256) % 256 / l;
 		b.str += c;
-		int n = b2.num - l;
-		while(n > 0){
-			c = (b2.str[n / 8] & c_r) + (b2.str[n / 8 + 1] & c_l);
+		while(k < b2.num){
+			c = (int(b2.str[k / 8]) + 256) % 256 * r % 256 +
+			 	(int(b2.str[k / 8 + 1])+ 256 ) % 256 / l;
 			b.str += c;
-			n -= 8;
+			k += 8;
 		}
 	}
+	b.str = b.str.substr(0, b.num / 8 + 2);
 	return b;
 }
 
@@ -103,9 +106,9 @@ Bin read_bin(const Bin &bin, int pos, int len){
 	return b;
 }
 
-ostream& operator<<(ostream& out, const Bin& b){
+ostream& operator<<(ostream & out, const Bin & b){
 	for(int i = 0; i < b.num; i++){
-		char c = (1 << (8 - (i % 8))) % 256;
+		char c = (1 << (7 - (i % 8))) % 256;
 		if(b.str[i / 8] & c) out << "1";
 		else out << "0";
 	}

@@ -3,7 +3,6 @@
 #include <queue>
 #include <vector>
 #include <iostream>
-#include <unordered_map>
 #include <map>
 #include <fstream>
 using namespace std;
@@ -29,14 +28,14 @@ public:
 	string decode(const string & str);
 
 private:
-	unordered_map<char,int> Freq;
+	map<char,int> Freq;
 	priority_queue<pair<int,vector<char> >,vector<pair<int,vector<char> > >, cmp> Freq_index;
-	unordered_map<int,char> Hfm_tree;
-	unordered_map<char,int> Hfm_index;
+	map<int,char> Hfm_tree;
+	map<char,int> Hfm_index;
 
 	int right_son_node(int i);
 	int left_son_node(int i);
-	void combine(pair<int,vector<char>> &n1,pair<int,vector<char>> &n2);
+	void combine(pair<int,vector<char> > &n1,pair<int,vector<char> > &n2);
 
 	int bin_decode(const Bin &bin);
 	Bin bin_encode(int i);
@@ -142,7 +141,7 @@ Bin Huffman::bin_encode(int i){
 	return b;
 }
 
-void Huffman::combine(pair<int,vector<char>> &n1,pair<int,vector<char>> &n2){
+void Huffman::combine(pair<int,vector<char> > &n1,pair<int,vector<char> > &n2){
 	for(int i = 0; i < n1.second.size(); i++){
 		if(Hfm_index.count(n1.second[i])) Hfm_index[n1.second[i]] = left_son_node(Hfm_index[n1.second[i]]);
 		else Hfm_index[n1.second[i]] = 0;
@@ -165,16 +164,17 @@ Bin Huffman::encode_content(const string & str){
 			Freq[str[i]] = 0;
 		}
 	}
-	auto it = Freq.begin();
+	map<char, int>::iterator  it = Freq.begin();
 	while(it != Freq.end()){
-		vector<char> ch = {it->first};
+		vector<char> ch;
+		ch.push_back(it->first);
 		Freq_index.push(make_pair(it->second,ch));
 		it++;
 	}
 	while(Freq_index.size() > 1){
-		auto n1 = Freq_index.top();
+		pair<int,vector<char> > n1 = Freq_index.top();
 		Freq_index.pop();
-		auto n2 = Freq_index.top();
+		pair<int,vector<char> > n2 = Freq_index.top();
 		Freq_index.pop();
 		if(n1.first < n2.first) combine(n1,n2);
 		else combine(n2,n1);
@@ -193,7 +193,7 @@ Bin Huffman::gencode(int rest){
 	b.str += c;
 	c = Hfm_index.size();
 	b.str += c;
-	for(auto it = Hfm_index.begin(); it != Hfm_index.end(); it++){
+	for(map<char, int>::iterator it = Hfm_index.begin(); it != Hfm_index.end(); it++){
 		c = it->first;
 		b.str += c;
 		c = it->second >> 8;

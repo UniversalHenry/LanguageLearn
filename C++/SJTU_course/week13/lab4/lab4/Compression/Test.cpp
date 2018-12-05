@@ -20,22 +20,37 @@ int main(void){
     start = clock();
 
 // try here
-    Bin b1,b2;
-    char c = 0;
-    b1.str += c;
-    b1.str += c;
-    b1.num = 12;
-    cout << b1 << endl;
-    c = 255;
-    b2.str += c;
-    b2.num = 5;
-    cout << b2 << endl;
-    cout << (b2 = add_bin(b2,b1)) << endl;
-    cout << (b1 = add_bin(b2,b1)) << endl;
-    cout << (b2 = add_bin(b2,b1)) << endl;
-    cout << b2;
-    cout << "***";
-    cout << read_bin(b2,4,20);
+    {
+        string inputFilename, outputFilename;
+        inputFilename = "try.txt";
+        outputFilename = "output.txt";
+        ofstream ofs(outputFilename.c_str(), ios::out | ios::binary);
+        ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
+        Huffman hfm_coder;
+        char c;
+        string input, output;
+        while (ifs.get(c)) input += c;
+        output = hfm_coder.encode(input);
+        for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
+        ofs.close();
+        ifs.close();
+    }
+    {
+        string inputFilename, outputFilename;
+        inputFilename = "output.txt";
+        outputFilename = "returned.txt";
+        ofstream ofs(outputFilename.c_str(), ios::out | ios::binary);
+        ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
+        Huffman hfm_coder;
+        char c;
+        string input, output;
+        while (ifs.get(c)) input += c;
+        output = hfm_coder.decode(input);
+        for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
+        ofs.close();
+        ifs.close();
+    }
+
 
 // time stop
     end = clock();

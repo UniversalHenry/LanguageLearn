@@ -247,7 +247,7 @@ string Huffman::encode(const string & str){
 	int n = bout.num;
  	n /= 8;
   	if(bout.num % 8) n++;
-	return bout.str.substr(n);
+	return bout.str;
 }
 
 string Huffman::decode(const string & str){

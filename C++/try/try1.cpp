@@ -12,9 +12,6 @@
 
 using namespace std;
 
-
-int default3(int c ,const int a = 30);
-
 int main(void){
 // time start
     double dur;

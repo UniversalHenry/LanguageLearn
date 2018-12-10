@@ -28,7 +28,8 @@ int main(void){
         ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
         Huffman hfm_coder;
         char c;
-        string input, output;
+        string input;
+        vector<char> output;
         while (ifs.get(c)) input += c;
         output = hfm_coder.encode(input);
         for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
@@ -51,6 +52,24 @@ int main(void){
         ifs.close();
     }
 
+    // Bin b1,b2;
+    // string s;
+    // char c1 = 255,c2 = 0;
+    // s += c1;
+    // b1 = gen_bin(s,2);
+    // s[0] = c2;
+    // b2 = gen_bin(s,1);
+    // cout << (b1 = add_bin(b1,b2)) << endl;
+    // cout << (b1 = add_bin(b1,b2)) << endl;
+    // cout << (b1 = add_bin(b1,b2)) << endl;
+    // cout << (b1 = add_bin(b1,b2)) << endl;
+    // cout << (b1 = add_bin(b1,b2)) << endl;
+    // cout << (b1 = add_bin(b1,b2)) << endl;
+    // cout << (b2 = add_bin(b1,b2)) << endl;
+    // cout << (b2 = add_bin(b1,b2)) << endl;
+    // cout << (b2 = add_bin(b1,b2)) << endl;
+    // cout << (b2 = add_bin(b1,b2)) << endl;
+    // cout << (b2 = add_bin(b1,b2)) << endl;
 
 // time stop
     end = clock();

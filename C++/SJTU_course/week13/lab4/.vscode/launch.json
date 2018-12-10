@@ -1,28 +1,30 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/exefile/${fileBasenameNoExtension}.out",//"${workspaceRoot}/exefile/a.out",
+            // g++ -g 生成的调试用目标文件名
+            "program": "${workspaceFolder}/exefile/${fileBasenameNoExtension}-debug.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/exefile",
+            "cwd":"${workspaceFolder}/exefile",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "preLaunchTask": "echo",
+            // 输入 gdb 的路径 (有些情况下需要绝对路径)
+            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ]
+            ],
+            // task.json 中指定的调试目标文件编译命令
+            // 这样可以在调试前免去手动执行 build-debug 的一步
+            "preLaunchTask": "build-debug"
         }
     ]
 }

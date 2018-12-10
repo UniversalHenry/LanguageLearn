@@ -12,6 +12,7 @@
                 "-g",
                 "-o",
                 "\"${workspaceFolder}/exefile/${fileBasenameNoExtension}.out\"",
+                "-std=c++11",
             ],
             "group": {
                 "kind": "build",

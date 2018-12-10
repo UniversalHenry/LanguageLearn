@@ -245,7 +245,6 @@ bool Heap<Compare>::erase(int element)
     if(elements.rbegin()->second.empty()) elements.erase(--elements.end());
     int l_r = level;
     int p_r = p;
-    cout << endl;
     auto it_tmp = it;
     if(it != elements.begin() && cmp(it->second[p],(--it_tmp)->second[p >> 1])){
         for(; it != elements.begin(); it--){
@@ -374,7 +373,7 @@ void Heap<Compare>::index_update(int val, int l1, int p1, int l2, int p2){
         }
         it++;
     }
-    if(flag) cout << "update wrong" << endl;
+    // if(flag) cout << "update wrong" << endl;
 }
 
 template<class Compare>
@@ -389,7 +388,7 @@ void Heap<Compare>::index_erase(int val, int l, int p){
         }
         it++;
     }
-    if(flag) cout << "erase wrong" << endl;
+    // if(flag) cout << "erase wrong" << endl;
 }
 
 // For check and debug

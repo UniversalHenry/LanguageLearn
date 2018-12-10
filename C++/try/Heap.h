@@ -29,24 +29,6 @@ class Heap
     private:
       // use elements to store the element
       map<int,vector<int>> elements;
-      // use elements_index to store the position of elements
-      unordered_multimap<int,pair<int,int>> elements_index;
-      
-      /*
-       * Method: update(int val, int l1, int p1, int l2, int p2)
-       * Usage: void update(int val, int l1, int p1, int l2, int p2)
-       * ------------------------
-       * update the elements index
-       */
-      void index_update(int val, int l1, int p1, int l2, int p2);
-
-      /*
-       * Method: index_erase(int val, int l, int p)
-       * Usage: void index_erase(int val, int l, int p)
-       * ------------------------
-       * erase the elements index
-       */
-      void index_erase(int val, int l, int p);
 
       // cmp is a comparer that can help you to compare two element's priority
       // Usage:
@@ -199,20 +181,17 @@ void Heap<Compare>::insert(int element)
     }
     int l_r = level;
     int p_r = p;
-    elements_index.insert(make_pair(element,make_pair(level,p)));
     for(auto it = (--elements.end()); it != elements.begin(); it--){
         int p_ = p >> 1;
         auto it_ = it;
         it_--;
         if(cmp(it->second[p],it_->second[p_])){
-            index_update(it_->second[p_], it_->first, p_, level, p);
             swap(it->second[p],it_->second[p_]);
             level = it_->first;
             p = p_;
         }
         else break;
     }
-    index_update(element,l_r,p_r,level,p);
 }
 
 template<class Compare>
@@ -229,15 +208,24 @@ bool Heap<Compare>::erase(int element)
 {
     // you code here
     if(elements.empty()) return false;
-    auto the_index = elements_index.find(element);
-    if(the_index == elements_index.end()) return false;
-    int level = the_index->second.first;
-    int p = the_index->second.second;
-    elements_index.erase(the_index);
+    int level = -1;
+    int p = -1;
+    for(int i = 0; i < elements.size(); i++){
+        for(int j = 0; j < elements[i].size(); j++){
+            if(elements[i][j] == element){
+                level = i;
+                p = j;
+            }
+        }
+    }
+    if(level == elements.size() - 1 && p == elements[level].size() - 1){
+        elements.rbegin()->second.erase(--(elements.rbegin()->second.end()));
+        return true;
+    }
+    if(level == -1) return false;
     auto it = elements.find(level);
     it->second[p] = *(elements.rbegin()->second.rbegin());
     elements.rbegin()->second.erase(--(elements.rbegin()->second.end()));
-    index_update(it->second[p],elements.rbegin()->first,elements.rbegin()->second.size(),level,p);
     if(elements.rbegin()->first == level && elements.rbegin()->second.size() == p){
         if(p == 0) elements.erase(--elements.end());
         return true;
@@ -253,42 +241,35 @@ bool Heap<Compare>::erase(int element)
             auto it_ = it;
             it_--;
             if(cmp(it->second[p],it_->second[p_])){
-                index_update(it_->second[p_], it_->first, p_, level, p);
                 swap(it->second[p],it_->second[p_]);
                 level = it_->first;
                 p = p_;
             }
             else break;
         }
-        index_update(element,l_r,p_r,level,p);
     }else if(it != (--elements.end())){
         for(; it != elements.end(); it++){
             auto it_ = it;
             it_++;
             int p_ = p << 1;
             if(it_ == elements.end() || it_->second.size() < p_ + 1){
-                index_update(it->second[p],l_r,p_r,it->first,p);
                 break;
             }
             if(it_->second.size() == p_ + 1 || cmp(it_->second[p_], it_->second[p_ + 1])){
                 if(cmp(it_->second[p_], it->second[p])){
-                    index_update(it_->second[p_],it_->first, p_,it->first, p);
                     swap(it_->second[p_], it->second[p]);
                     p = p_;
                 }
                 else{
-                    index_update(it->second[p],l_r,p_r,it->first,p);
                     break;
                 }
             }else{
                 p_++;
                 if(cmp(it_->second[p_], it->second[p])){
-                    index_update(it_->second[p_],it_->first, p_,it->first, p);
                     swap(it_->second[p_], it->second[p]);
                     p = p_;
                 }
                 else{
-                    index_update(it->second[p],l_r,p_r,it->first,p);
                     break;
                 }
             }
@@ -305,10 +286,12 @@ int Heap<Compare>::pop()
     // you code here
     if(elements.empty()) return 0;
     int val = elements.begin()->second[0];
+    if(elements.size() == 1){
+        elements.clear();
+        return val;
+    }
     int p = (elements.rbegin()->second.size()) - 1;
-    index_erase(val,0,0);
     elements.begin()->second[0] = elements.rbegin()->second[p];
-    index_update(elements.rbegin()->second[p],elements.rbegin()->first,p,0,0);
     elements.rbegin()->second.erase(--(elements.rbegin()->second.end()));
     if(elements.rbegin()->second.empty()) elements.erase(--(elements.end()));
     p = 0;
@@ -317,28 +300,23 @@ int Heap<Compare>::pop()
         it_++;
         int p_ = p << 1;
         if(it_ == elements.end() || it_->second.size() < p_ + 1){
-            index_update(it->second[p],0,0,it->first,p);
             break;
         }
         if(it_->second.size() == p_ + 1 || cmp(it_->second[p_], it_->second[p_ + 1])){
             if(cmp(it_->second[p_], it->second[p])){
-                index_update(it_->second[p_],it_->first, p_,it->first, p);
                 swap(it_->second[p_], it->second[p]);
                 p = p_;
             }
             else{
-                index_update(it->second[p],0,0,it->first,p);
                 break;
             }
         }else{
             p_++;
             if(cmp(it_->second[p_], it->second[p])){
-                index_update(it_->second[p_],it_->first, p_,it->first, p);
                 swap(it_->second[p_], it->second[p]);
                 p = p_;
             }
             else{
-                index_update(it->second[p],0,0,it->first,p);
                 break;
             }
         }
@@ -361,37 +339,6 @@ int Heap<Compare>::size()
     if(elements.empty())return 0;
     return ((1 << elements.rbegin()->first) - 1 + elements.rbegin()->second.size());
 }
-
-template<class Compare>
-void Heap<Compare>::index_update(int val, int l1, int p1, int l2, int p2){
-    bool flag = true;
-    auto it = elements_index.find(val);
-    while(it != elements_index.end() && it->first == val){
-        if(it->second.first == l1 && it->second.second == p1){
-            it->second.first = l2;
-            it->second.second = p2;
-            flag = false;
-        }
-        it++;
-    }
-    if(flag) cout << "update wrong" << endl;
-}
-
-template<class Compare>
-void Heap<Compare>::index_erase(int val, int l, int p){
-    bool flag = true;
-    auto it = elements_index.find(val);
-    while(it != elements_index.end() && it->first == val){
-        if(it->second.first == l && it->second.second == p){
-            it = elements_index.erase(it);
-            flag = false;
-            break;
-        }
-        it++;
-    }
-    if(flag) cout << "erase wrong" << endl;
-}
-
 // For check and debug
     // for(auto tmp = elements.begin(); tmp != elements.end(); tmp++){
     //     cout << tmp->first << ": ";

@@ -26,6 +26,7 @@ struct transfer
     bool used;
 };
 
+
 bool datejduge(struct transfer t1, struct transfer t2){
     return (t1.date - t2.date) <= 30;
 }
@@ -64,29 +65,29 @@ int main()
     }
 
     cout << transfers.size() << endl;
-    cout << "Preparing ..." << endl;
-    map<int,vector<struct transfer> > transfer_info;
-    map<int,vector<struct transfer> > money_info;
-    for(int i = 0; i < transfers.size(); i++){
-        for(int j = i+1; j < transfers.size(); j++){
-            if(transfers[i].p1 == transfers[j].p2 && transfers[i].p2 == transfers[j].p1
-                 && transfers[i].money == transfers[j].money){
-                    transfer_info[transfers[i].p1].push_back(transfers[i]);
-                    money_info[transfers[i].money].push_back(transfers[i]);
-            }
-        }
-    }
-    cout << transfer_info.size() << endl;
-
 
     int loop_time = 0;
+    int money = 0;
+    vector<struct transfer> ans;
+    int ans_size = -1;
     while(true){
-        int ans_size = -1;
-        map<int, vector<int> > ans;
-        // find ans
-        for(auto it = transfer_info.begin(); it != transfer_info.end();){
-            if(it->second.size() == 0)it = transfer_info
+        if(ans_size == ans.size()) break;
+        ans_size = ans.size();
+        if(ans.empty()){
+            for(int i = 0; i < transfers.size(); i++){
+                bool flag = false;
+                for(int j = i+1; j < transfers.size(); j++){
+                    if(transfers[i].p1 == transfers[j].p2 && transfers[i].p2 == transfers[j].p1
+                        && transfers[i].money == transfers[j].money){
+                        ans.push_back(transfers[i]);
+                    }
+                    if(ans.size()) break;
+                }
+            }
+            money = transfers[0].money;
+            ans
         }
+    }
 
         // output
         int t = 0;

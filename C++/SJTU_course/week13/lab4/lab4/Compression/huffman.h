@@ -8,42 +8,55 @@
 using namespace std;
 
 struct Bin{
-	vector<char> con;
+	vector<unsigned char> con;
 	int num = 0;
+	bool operator< (const Bin& b) const{
+		if(num == b.num){
+			for(int i = 0; i < con.size(); i++){
+				if(con[i] != b.con[i]) return con[i] < b.con[i];
+				else if(i == con.size() - 1) return true;
+			}
+		}
+		else return num < b.num;
+	}
 };
 
 Bin add_bin(const Bin &b1, const Bin &b2);
-Bin gen_bin(const string & str);
-Bin gen_bin(const string & str, int i);
+Bin gen_bin(const vector<unsigned char> & str);
+Bin gen_bin(const vector<unsigned char> & str, int i);
 Bin read_bin(const Bin &b, int pos, int len);
 ostream& operator<<(ostream& out, const Bin& b);
 struct cmp
-{bool operator()(const pair<int,vector<char> > &n1, const pair<int,vector<char> > &n2) 
+{bool operator()(const pair<int,int> &n1, const pair<int,int> &n2) 
 { return (n1.first < n2.first);}
 };
 
 class Huffman {
 public:
-	vector<char> encode(const string & str);
-	string decode(const string & str);
+	vector<unsigned char> encode(const vector<unsigned char> & str);
+	vector<unsigned char> decode(const vector<unsigned char> & str);
+	Huffman():Hfm_tree_top(0){};
 
 private:
-	map<char,int> Freq;
-	priority_queue<pair<int,vector<char> >,vector<pair<int,vector<char> > >, cmp> Freq_index;
-	map<int,char> Hfm_tree;
-	map<char,int> Hfm_index;
+	map<unsigned char,int> Freq;
+	priority_queue<pair<int,int>,vector<pair<int,int> >, cmp> Freq_index;
+	map<int,vector<int> > Hfm_tree;
+	int Hfm_tree_top;
+	map<unsigned char,Bin> Hfm_index;
+	map<Bin,unsigned char> Hfm_decode;
 
 	int right_son_node(int i);
 	int left_son_node(int i);
-	void combine(pair<int,vector<char> > &n1,pair<int,vector<char> > &n2);
+	void combine(pair<int,int> &n1,pair<int,int> &n2);
 
 	int bin_decode(const Bin &bin);
 	Bin bin_encode(int i);
 
-	Bin gencode(int rest);
-	Bin encode_content(const string & str);
+	Bin gencode();
+	Bin encode_content(const vector<unsigned char> & str);
+	void gen_hfm_index(int top,Bin b);
 	int loadcode(Bin & bin);
-	string decode_content(const Bin & bin, int pointer);
+	vector<unsigned char> decode_content(const Bin & bin, int pointer);
 };
 
 Bin add_bin(const Bin &b1, const Bin &b2){
@@ -60,12 +73,12 @@ Bin add_bin(const Bin &b1, const Bin &b2){
 		r = 1 << r;
 		b.con = b1.con;
 		b.con.pop_back();
-		char c = (int(b1.con[b1.num / 8]) + 256) % 256 / r * r +
-			(int(b2.con[0]) + 256) % 256 / l;
+		unsigned char c = int(b1.con[b1.num / 8]) / r * r +
+			int(b2.con[0]) / l;
 		b.con.push_back(c);
 		while(k < b2.num){
-			c = (int(b2.con[k / 8]) + 256) % 256 * r % 256 +
-			 	(int(b2.con[k / 8 + 1])+ 256 ) % 256 / l;
+			c = int(b2.con[k / 8]) * r % 256 +
+			 	int(b2.con[k / 8 + 1]) / l;
 			b.con.push_back(c);
 			k += 8;
 		}
@@ -74,17 +87,18 @@ Bin add_bin(const Bin &b1, const Bin &b2){
 	return b;
 }
 
-Bin gen_bin(const string & str){
+Bin gen_bin(const vector<unsigned char> & str){
 	Bin b;
 	for(int i = 0; i < str.size(); i++) b.con.push_back(str[i]);
-	b.num = str.size() * sizeof(char);
+	b.num = str.size() * sizeof(unsigned char);
 	return b;
 }
 
-Bin gen_bin(const string & str, int i){
+Bin gen_bin(const vector<unsigned char> & str, int i){
 	Bin b;
 	b.num = i;
-	for(int i = 0; i < str.size(); i++) b.con.push_back(str[i]);
+	int s = (i - 1) / 8 + 1;
+	for(int i = 0; i < s; i++) b.con.push_back(str[i]);
 	return b;
 }
 
@@ -109,7 +123,7 @@ Bin read_bin(const Bin &bin, int pos, int len){
 
 ostream& operator<<(ostream & out, const Bin & b){
 	for(int i = 0; i < b.num; i++){
-		char c = (1 << (7 - (i % 8))) % 256;
+		unsigned char c = (1 << (7 - (i % 8))) % 256;
 		if(b.con[i / 8] & c) out << "1";
 		else out << "0";
 	}
@@ -117,15 +131,15 @@ ostream& operator<<(ostream & out, const Bin & b){
 }
 
 int Huffman::right_son_node(int i){
-	int l = (i >> 8) + 1;
-	int p = (i % 256) << 1;
-	return ((l << 8) + p + 1);
+	if(Hfm_tree.count(i) == 0) return 1000;
+	if(Hfm_tree[i].size() <= 1) return 500;
+	return Hfm_tree[i][1];
 }
 
 int Huffman::left_son_node(int i){
-	int l = (i >> 8) + 1;
-	int p = (i % 256) << 1;
-	return ((l << 8) + p);
+	if(Hfm_tree.count(i) == 0) return 1000;
+	if(Hfm_tree[i].size() <= 0) return 500;
+	return Hfm_tree[i][0];
 }
 
 int Huffman::bin_decode(const Bin &bin){
@@ -138,26 +152,21 @@ int Huffman::bin_decode(const Bin &bin){
 Bin Huffman::bin_encode(int i){
 	Bin b;
 	b.num = (i >> 8) + 1;
-	char c = i % 256;
+	unsigned char c = i % 256;
 	b.con.push_back(c);
 	return b;
 }
 
-void Huffman::combine(pair<int,vector<char> > &n1,pair<int,vector<char> > &n2){
-	for(int i = 0; i < n1.second.size(); i++){
-		if(Hfm_index.count(n1.second[i])) Hfm_index[n1.second[i]] = left_son_node(Hfm_index[n1.second[i]]);
-		else Hfm_index[n1.second[i]] = 0;
-	}
-	for(int i = 0; i < n2.second.size(); i++){
-		if(Hfm_index.count(n2.second[i])) Hfm_index[n2.second[i]] = right_son_node(Hfm_index[n2.second[i]]);
-		else Hfm_index[n2.second[i]] = 1;
-	}
+void Huffman::combine(pair<int,int> &n1,pair<int,int> &n2){
+	--Hfm_tree_top;
+	Hfm_tree[Hfm_tree_top].push_back(n1.first);
+	Hfm_tree[Hfm_tree_top].push_back(n2.first);
 	n1.first += n2.first;
-	n1.second.insert(n1.second.end(),n2.second.begin(),n2.second.end());
+	n1.second = Hfm_tree_top;
 	Freq_index.push(n1);
 }
 
-Bin Huffman::encode_content(const string & str){
+Bin Huffman::encode_content(const vector<unsigned char> & str){
 	Hfm_index.clear();
 	for(int i = 0; i < str.size(); i++){
 		if(Freq.count(str[i])){
@@ -166,42 +175,60 @@ Bin Huffman::encode_content(const string & str){
 			Freq[str[i]] = 0;
 		}
 	}
-	map<char, int>::iterator  it = Freq.begin();
+	map<unsigned char, int>::iterator  it = Freq.begin();
 	while(it != Freq.end()){
-		vector<char> ch;
-		ch.push_back(it->first);
-		Freq_index.push(make_pair(it->second,ch));
+		Freq_index.push(make_pair(it->second,int(it->first)));
 		it++;
 	}
 	while(Freq_index.size() > 1){
-		pair<int,vector<char> > n1 = Freq_index.top();
+		pair<int,int> n1 = Freq_index.top();
 		Freq_index.pop();
-		pair<int,vector<char> > n2 = Freq_index.top();
+		pair<int,int> n2 = Freq_index.top();
 		Freq_index.pop();
 		if(n1.first < n2.first) combine(n1,n2);
 		else combine(n2,n1);
 	}
 	Bin bout;
+	gen_hfm_index(Hfm_tree_top,bout);
 	for(int i = 0; i < str.size(); i++){
-		bout = add_bin(bout,bin_encode(Hfm_index[str[i]]));
+		bout = add_bin(bout,Hfm_index[str[i]]);
 	}
 	cout << "content:" << bout << endl; ////
 	return bout;
 }
 
-Bin Huffman::gencode(int rest){
+void Huffman::gen_hfm_index(int top,Bin b){
+	if(top >= 0){
+		if(top < 256){
+			unsigned char c = top;
+			Hfm_index[c] = b;
+		}
+		return;
+	}
+	unsigned char c0 = 0;
+	unsigned char c1 = 255;
+	vector<unsigned char> s0,s1;
+	s0.push_back(c0);
+	Bin b0 = gen_bin(s0,1);
+	s1.push_back(c1);
+	Bin b1 = gen_bin(s1,1);
+	gen_hfm_index(left_son_node(top),add_bin(b,b0));
+	gen_hfm_index(left_son_node(top),add_bin(b,b1));
+};
+
+Bin Huffman::gencode(){
 	Bin b;
-	b.num = (3 * Hfm_index.size() + 2) * 8;
-	char c = rest;
+	b.num = 0;
+	unsigned char c = 0;
 	b.con.push_back(c);
+	b.num += 8;
 	c = Hfm_index.size();
 	b.con.push_back(c);
-	for(map<char, int>::iterator it = Hfm_index.begin(); it != Hfm_index.end(); it++){
+	b.num += 8;
+	for(map<unsigned char, Bin>::iterator it = Hfm_index.begin(); it != Hfm_index.end(); it++){
 		c = it->first;
-		b.con.push_back(c);
-		c = it->second >> 8;
-		b.con.push_back(c);
-		c = it->second % 256;
+		b.num += 8;
+		b = add_bin(b, it->second);
 	}
 	cout << "gen_code:" << b << endl; ////
 	return b;
@@ -211,50 +238,59 @@ int Huffman::loadcode(Bin & bin){
 	Hfm_tree.clear();
 	int rest = bin.con[0];
 	int num = bin.con[1];
-	int pointer = (num * 3 + 2) * 8;
+	int pointer = 16;
 	bin.num -= rest;
+	if(num == 0 && bin.num > 256 * 8) num = 256;
 	for(int i = 0; i < num; i++){
-		char c = bin.con[i * 3 + 1];
-		int l = bin.con[i * 3 + 2];
-		int p = bin.con[i * 3 + 3];
-		Hfm_tree[(l << 8) + p] = c;
+		unsigned char c;
+		Bin btmp;
+		int len;
+		btmp = read_bin(bin,pointer,8);
+		c = btmp.con[0];
+		pointer += 8;
+		btmp = read_bin(bin,pointer,8);
+		len = btmp.con[0];
+		pointer += 8;
+		btmp = read_bin(bin,pointer,len);
+		Hfm_index[c] = btmp;
+		pointer += len;
 	}
 	return pointer;
 }
 
-string Huffman::decode_content(const Bin & bin, int pointer){
-	string output;
+vector<unsigned char> Huffman::decode_content(const Bin & bin, int pointer){
+	vector<unsigned char> output;
 	while(pointer < bin.num){
 		int read_len = 1;
-		char c;
+		unsigned char c;
 		while(true){
 			Bin tmp_bin = read_bin(bin,pointer,read_len);
-			int index = bin_decode(tmp_bin);
-			if(Hfm_tree.count(index)){
-				c = Hfm_tree[index];
+			if(Hfm_decode.count(tmp_bin)){
+				c = Hfm_decode[tmp_bin];
 				break;
 			}
 			read_len++;
 			if(pointer + read_len >= bin.num) break;
 		}
-		output += c;
+		output.push_back(c);
 		pointer += read_len;
 	}
 	return output;
 }
 
-vector<char> Huffman::encode(const string & str){
+vector<unsigned char> Huffman::encode(const vector<unsigned char> & str){
 	Bin bout;
 	bout = encode_content(str);
+	bout = add_bin(gencode(),bout);
 	int rest = (8 - (bout.num % 8)) % 8;
-	bout = add_bin(gencode(rest),bout);
+	bout.con[0] = rest;
 	int n = bout.num;
  	n /= 8;
   	if(bout.num % 8) n++;
 	return bout.con;
 }
 
-string Huffman::decode(const string & str){
+vector<unsigned char> Huffman::decode(const vector<unsigned char> & str){
 	Bin bin;
 	for(int i = 0; i < str.size(); i++) bin.con.push_back(str[i]);
 	bin.num = str.size() * 8;

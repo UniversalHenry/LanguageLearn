@@ -20,8 +20,8 @@ void compress(string inputFilename, string outputFilename) {
   ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
   Huffman hfm_coder;
   char c;
-  string input, output;
-  while (ifs.get(c)) input += c;
+  vector<unsigned char> input, output;
+  while (ifs.get(c)) input.push_back(c);
   output = hfm_coder.encode(input);
   for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
   ofs.close();
@@ -33,8 +33,8 @@ void decompress(string inputFilename, string outputFilename) {
   ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
   Huffman hfm_coder;
   char c;
-  string input, output;
-  while (ifs.get(c)) input += c;
+  vector<unsigned char> input, output;
+  while (ifs.get(c)) input.push_back(c);
   output = hfm_coder.decode(input);
   for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
   ofs.close();

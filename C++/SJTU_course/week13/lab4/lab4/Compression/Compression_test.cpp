@@ -20,8 +20,8 @@ void compress(string inputFilename, string outputFilename) {
   ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
   Huffman hfm_coder;
   char c;
-  string input, output;
-  while (ifs.get(c)) input += c;
+  vector<unsigned char> input, output;
+  while (ifs.get(c)) input.push_back(c);
   output = hfm_coder.encode(input);
   for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
   ofs.close();
@@ -33,32 +33,21 @@ void decompress(string inputFilename, string outputFilename) {
   ifstream ifs(inputFilename.c_str(), ios::in | ios::binary);
   Huffman hfm_coder;
   char c;
-  string input, output;
-  while (ifs.get(c)) input += c;
+  vector<unsigned char> input, output;
+  while (ifs.get(c)) input.push_back(c);
   output = hfm_coder.decode(input);
   for(int i = 0; i < output.size(); i++) ofs.put(output[i]);
   ofs.close();
   ifs.close();
 }
 
-void usage(string prog) {
-  cerr << "Usage: " << endl
-      << "    " << prog << "[-d] input_file output_file" << endl;
-  exit(2);
-}
-
-int main(int argc, char* argv[]) {
-  int i;
-  string inputFilename, outputFilename;
-  bool isDecompress = false;
-  for (i = 1; i < argc; i++) {
-    if (argv[i] == string("-d")) isDecompress = true;
-    else if (inputFilename == "") inputFilename = argv[i];
-    else if (outputFilename == "") outputFilename = argv[i];
-    else usage(argv[0]);
-  }
-  if (outputFilename == "") usage(argv[0]);
-  if (isDecompress) decompress(inputFilename, outputFilename);
-  else compress(inputFilename, outputFilename);
+int main() {
+  string inputFilename, outputFilename, genFile;
+  inputFilename = "./trace/trace03.txt";
+  outputFilename = "output.txt";
+  genFile = "genfile.txt";
+  compress(inputFilename, outputFilename);
+  decompress(outputFilename,genFile);
+  system("pause");
   return 0;
 }

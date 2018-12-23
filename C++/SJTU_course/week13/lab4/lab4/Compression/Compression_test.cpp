@@ -43,11 +43,12 @@ void decompress(string inputFilename, string outputFilename) {
 
 int main() {
   string inputFilename, outputFilename, genFile;
-  inputFilename = "./trace/trace03.txt";
+  inputFilename = "./test.txt";
   outputFilename = "output.txt";
   genFile = "genfile.txt";
   compress(inputFilename, outputFilename);
   decompress(outputFilename,genFile);
+  // naiveCopy(inputFilename,genFile);
   system("pause");
   return 0;
 }

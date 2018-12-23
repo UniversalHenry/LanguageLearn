@@ -262,7 +262,8 @@ int Huffman::loadcode(Bin & bin){
 
 vector<unsigned char> Huffman::decode_content(const Bin & bin, int pointer){
 	vector<unsigned char> output;
-	for(map<unsigned char,Bin>:: iterator it = Hfm_index.begin(); it != Hfm_index.end(); it++)
+	for(map<unsigned char,Bin>:: iterator it = Hfm_index.begin(); it != Hfm_index.end(); it++) 
+		cout << it->first << ":\t" << it->second << endl; ////
 	while(pointer < bin.num){
 		int read_len = 1;
 		unsigned char c;
@@ -278,7 +279,7 @@ vector<unsigned char> Huffman::decode_content(const Bin & bin, int pointer){
 			}
 			if(flag) break;
 			read_len++;
-			if(pointer + read_len >= bin.num) break;
+			if(pointer + read_len > bin.num) break;
 		}
 		output.push_back(c);
 		pointer += read_len;
@@ -296,6 +297,7 @@ vector<unsigned char> Huffman::encode(const vector<unsigned char> & str){
 	int n = bout.num;
  	n /= 8;
   	if(bout.num % 8) n++;
+	cout << "compress output:\t" << bout << endl; ////
 	return bout.con;
 }
 
@@ -304,6 +306,7 @@ vector<unsigned char> Huffman::decode(const vector<unsigned char> & str){
 	Bin bin;
 	bin.con = str;
 	bin.num = str.size() * 8;
+	cout << "decompress input:\t" << bin << endl; ////
 	int pointer = loadcode(bin);
 	// cout << "decode:" ; ////
 	// vector<unsigned char> x = decode_content(bin, pointer); ////

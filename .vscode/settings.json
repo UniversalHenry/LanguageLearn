@@ -31,6 +31,7 @@
         "type_traits": "cpp",
         "iomanip": "cpp",
         "ios": "cpp",
-        "graphics.h": "c"
+        "graphics.h": "c",
+        "new": "cpp"
     }
 }

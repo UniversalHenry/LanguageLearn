@@ -1,4 +1,6 @@
-# incluse <iostream>
+# include <iostream>
+
+using namespace std;
 
 int factorial(int x){
 	if (x<= 0) return 1;
@@ -10,5 +12,6 @@ int main(){
 	cout << "Please input k:";
 	cin >> k;
 	cout << factorial(k);
+	cin >> k;
 	return 0;
 }
